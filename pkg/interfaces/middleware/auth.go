@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"log"
 	"net/http"
@@ -13,10 +14,23 @@ import (
 	firebase "firebase.google.com/go"
 
 	"github.com/satorunooshie/fireworks_stall/pkg/dcontext"
+	"github.com/satorunooshie/fireworks_stall/pkg/domain/model"
+	"github.com/satorunooshie/fireworks_stall/pkg/infrastructure/mysql/repoimpl"
+	"github.com/satorunooshie/fireworks_stall/pkg/usecase"
 )
 
+type auth struct {
+	db *sql.DB
+}
+
+func NewAuth(db *sql.DB) *auth {
+	return &auth{
+		db: db,
+	}
+}
+
 //nolint
-func Auth(next http.HandlerFunc) http.HandlerFunc {
+func (a *auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		idToken := strings.Replace(authHeader, "Bearer ", "", 1)
@@ -28,7 +42,7 @@ func Auth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		path, err := getFilePath()
+		path, err := a.getFilePath()
 		if err != nil {
 			log.Printf("[ERROR] auth::Auth::getFilePath: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -62,6 +76,28 @@ func Auth(next http.HandlerFunc) http.HandlerFunc {
 			_, _ = w.Write([]byte("error verifying ID token\n"))
 			return
 		}
+		uri := repoimpl.NewUserRepoImpl(a.db)
+		uc := usecase.NewUserUsecase(uri)
+		user, err := uc.Select(ctx, token.UID)
+		if user == nil {
+			h := r.Header.Get("username")
+			if h == "" {
+				w.WriteHeader(http.StatusBadRequest)
+				// TODO: Delete debug code instead return json error message
+				_, _ = w.Write([]byte("error username is empty\n"))
+				return
+			}
+			ent := &model.User{
+				UID:  token.UID,
+				Name: h,
+			}
+			if err := uc.Insert(ctx, ent); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				// TODO: Delete debug code instead return json error message
+				_, _ = w.Write([]byte("error insert user\n"))
+				return
+			}
+		}
 		dcontext.SetUID(ctx, token.UID)
 		log.Printf("[INFO] Verified ID token: %v\n", token)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -69,7 +105,7 @@ func Auth(next http.HandlerFunc) http.HandlerFunc {
 }
 
 // NOTE: 実行パスが違うのでトリミング
-func getFilePath() (string, error) {
+func (a *auth) getFilePath() (string, error) {
 	const (
 		dirname  = "fireworks_stall"
 		filename = "firebase-sdk.json"
