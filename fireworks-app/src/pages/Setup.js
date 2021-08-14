@@ -4,8 +4,7 @@ import testSketch from "../components/fireworks";
 
 function Setup() {
   return (
-    <div className="App">
-      <header className="App-header">set up</header>
+    <div>
       <P5Wrapper sketch={testSketch} />
     </div>
   );
