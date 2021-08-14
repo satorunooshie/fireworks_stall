@@ -13,7 +13,18 @@ CREATE SCHEMA IF NOT EXISTS `fireworks` DEFAULT CHARACTER SET utf8mb4;
 SET
     CHARSET utf8mb4;
 
-## ---------------------
+CREATE TABLE `fireworks`.`user` (
+    `uid` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `score` int(10) unsigned default 0,
+    `level` tinyint(3) unsigned default 1,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` DATETIME NULL,
+    PRIMARY KEY (`uid`)
+) ENGINE = InnoDB COMMENT = 'ユーザテーブル';
+
+INSERT INTO `user`(`uid`, `name`, `score`) VALUES ('aaa', 'test name', 100);
 
 SET
     SQL_MODE = @OLD_SQL_MODE;
