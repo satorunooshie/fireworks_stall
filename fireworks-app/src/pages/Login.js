@@ -1,5 +1,19 @@
 import firebase from "../config";
+import Make from "./Make";
+import { useState } from "react";
+// import history from "history/createBrowserHistory";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+  useHistory,
+} from "react-router-dom";
 function Login() {
+  const token = localStorage.getItem("username");
+  console.log(token);
+  const [logined, setLogined] = useState(false);
+  const history = useHistory();
   function loginWithTwitter() {
     var provider = new firebase.auth.TwitterAuthProvider();
     firebase
@@ -33,6 +47,19 @@ function Login() {
         var credential = error.credential;
         // ...
       });
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // const signOutMessage = `
+        // // <p>Hello, ${user.displayName}!<\/p>
+        // // <button type="submit"  onClick="signOut()">サインアウト<\/button>
+        // // `;
+        // // document.getElementById('auth').innerHTML =  signOutMessage;
+        // setLogined(true);
+        history.push("/make");
+        console.log("ログインしています");
+      }
+    });
   }
   function logoutHandler() {
     firebase
@@ -46,23 +73,63 @@ function Login() {
       });
   }
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <button onClick={loginWithTwitter}>login</button>
-        <button onClick={logoutHandler}>logout</button>
-      </header>
-    </div>
+    <Router history={history}>
+      <Switch>
+        {/* <Route path="/" exact component={PageOne} /> */}
+        <Route path="/make/" exact>
+          <Make />
+        </Route>
+      </Switch>
+      <div
+        className="App background-img"
+        style={{
+          backgroundImage: 'url("../../073294.jpg")',
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          width: "100%",
+          height: "100vh",
+          position: "relative",
+        }}
+      >
+        <header className="App-header">
+          <p>
+            Edit <code>src/App.js</code> and save to reload.
+          </p>
+
+          <button
+            onClick={loginWithTwitter}
+            style={{
+              display: "block",
+              padding: "10px",
+              position: "absolute",
+              bottom: "300px",
+              right: "100px",
+              color: "#fff",
+              backgroundColor: "#eb6100",
+              borderRadius: "100vh",
+            }}
+          >
+            ログインして遊ぶ
+          </button>
+          <button
+            onClick={loginWithTwitter}
+            style={{
+              display: "block",
+              padding: "10px",
+              position: "absolute",
+              bottom: "200px",
+              right: "120px",
+              color: "#fff",
+              backgroundColor: "#eb6100",
+              borderRadius: "100vh",
+            }}
+          >
+            しないで遊ぶ
+          </button>
+          <button onClick={logoutHandler}>ログアウト</button>
+        </header>
+      </div>
+    </Router>
   );
 }
 
