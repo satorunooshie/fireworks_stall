@@ -1,10 +1,18 @@
 .container {
   height: 100vh;
-  position: relative;
+  /*position: relative;*/
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .button-block {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
+}
+
+.score {
+  background: rgba(255, 255, 255, 1);
+  /* color: white;*/
+  color: black;
+  height: 100%;
 }
