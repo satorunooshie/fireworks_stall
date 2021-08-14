@@ -5,6 +5,7 @@ import "./Make.css";
 function App() {
   const [color, setColor] = useState("#fffacd");
   const [level, setLevel] = useState(0);
+  const [indiv, setIndiv] = useState(false);
 
   useEffect(() => {
     const f = async () => {
@@ -61,10 +62,14 @@ function App() {
 
   const c = Math.PI / 180;
 
-  function colorChange(gunpowders, size, color) {
+  function colorChange(gunpowders, size, color, id) {
     const newGunpowders = JSON.parse(JSON.stringify(gunpowders));
-    for (let i = 0; i < newGunpowders.length; i++) {
-      newGunpowders[i].color = color;
+    if (!indiv) {
+      for (let i = 0; i < newGunpowders.length; i++) {
+        newGunpowders[i].color = color;
+      }
+    } else {
+      newGunpowders[id].color = color;
     }
     if (size === "small") {
       setSmallGunpowder(newGunpowders);
@@ -116,7 +121,9 @@ function App() {
                   cy={50 * Math.sin(22.5 * s.id * c)}
                   r={9.5}
                   fill={s.color}
-                  onClick={() => colorChange(smallGunpowder, "small", color)}
+                  onClick={() =>
+                    colorChange(smallGunpowder, "small", color, s.id)
+                  }
                 />
               </g>
             );
@@ -129,7 +136,7 @@ function App() {
                   cy={86 * Math.sin(18 * s.id * c)}
                   r={13}
                   fill={s.color}
-                  onClick={() => colorChange(bigGunpowder, "big", color)}
+                  onClick={() => colorChange(bigGunpowder, "big", color, s.id)}
                 />
               </g>
             );
@@ -160,8 +167,13 @@ function App() {
       </div>
       <div>
         <div>
-          <button>一周一括</button>
-          <button disabled={level >= 3 ? false : true}>1つずつ</button>
+          <button onClick={() => setIndiv(false)}>一周一括</button>
+          <button
+            onClick={() => setIndiv(true)}
+            disabled={level >= 0 ? false : true}
+          >
+            1つずつ
+          </button>
         </div>
         {/*<div>
           <label>
