@@ -11,7 +11,7 @@ function Setup() {
 
   setTimeout(function () {
     console.log("time out");
-    setFin(true);
+    //setFin(true);
     //多分10秒くらいがちょうどいい
   }, 5000);
 
