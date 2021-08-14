@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Make from "./pages/Make";
 import Setup from "./pages/Setup";
 import Score from "./pages/Score";
-
+import Logout from "./pages/Logout";
 function App() {
   return (
     <Router>
@@ -17,6 +17,9 @@ function App() {
           <Switch>
             <Route path="/login" exact>
               <Login />
+            </Route>
+            <Route path="/logout" exact>
+              <Logout />
             </Route>
             <Route exact path="/">
               <Redirect to="/login" />
