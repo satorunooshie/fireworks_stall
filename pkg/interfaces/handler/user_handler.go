@@ -16,6 +16,7 @@ type UserHandler interface {
 	HandleInsert() http.HandlerFunc
 	HandleSaveScore() http.HandlerFunc
 	HandleDelete() http.HandlerFunc
+	HandleGetRanking() http.HandlerFunc
 }
 
 type userHandler struct {
@@ -35,7 +36,7 @@ func (userH *userHandler) HandleGetLevel() http.HandlerFunc {
 		ctx := request.Context()
 		uid := dcontext.GetUIDFromContext(ctx)
 		if uid == "" {
-			log.Print("[ERROR] user not found")
+			log.Print("[INFO] user not found")
 			http.Error(writer, "user not found", http.StatusBadRequest)
 			return
 		}
@@ -46,7 +47,7 @@ func (userH *userHandler) HandleGetLevel() http.HandlerFunc {
 			return
 		}
 		if user == nil {
-			log.Print("[ERROR] user not found")
+			log.Print("[WARN] user not found")
 			http.Error(writer, "user not found", http.StatusBadRequest)
 			return
 		}
@@ -89,7 +90,7 @@ func (userH *userHandler) HandleSaveScore() http.HandlerFunc {
 			return
 		}
 		if user == nil {
-			log.Print("[ERROR] user not found")
+			log.Print("[WARN] user not found")
 			http.Error(writer, "user not found", http.StatusBadRequest)
 			return
 		}
@@ -113,7 +114,7 @@ func (userH *userHandler) HandleSaveScore() http.HandlerFunc {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		writer.WriteHeader(http.StatusOK)
+		writer.WriteHeader(http.StatusNoContent)
 		writer.Header().Set("Content-Type", "application/json")
 	}
 }
@@ -129,6 +130,73 @@ func (userH *userHandler) HandleInsert() http.HandlerFunc {
 func (userH *userHandler) HandleDelete() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		panic("do something")
+	}
+}
+
+// HandleGetRanking ...
+func (userH *userHandler) HandleGetRanking() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		ctx := request.Context()
+		uid := dcontext.GetUIDFromContext(ctx)
+		uid = "aaa"
+		if uid == "" {
+			log.Print("[INFO] user not found")
+			http.Error(writer, "user not found", http.StatusBadRequest)
+			return
+		}
+
+		user, err := userH.userUseCase.SelectUser(ctx, uid)
+		if err != nil {
+			log.Printf("[ERROR] select user: %v", err.Error())
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if user == nil {
+			log.Print("[WARN] user not found")
+			http.Error(writer, "user not found", http.StatusBadRequest)
+			return
+		}
+
+		users, err := userH.userUseCase.SelectUsers(ctx)
+		if err != nil {
+			log.Printf("[ERROR] select users: %v", err.Error())
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		log.Println(&users)
+		if len(users) == 0 {
+			log.Print("[ERROR] users not found on ranking")
+			http.Error(writer, "user not found", http.StatusBadRequest)
+			return
+		}
+		rankings := make([]*ranking, len(users))
+		for i, v := range users {
+			var r ranking
+			r.Name = v.Name
+			r.Score = v.Score
+			rankings[i] = &r
+		}
+
+		rank, err := userH.userUseCase.SelectUserScoreRank(ctx, user.Score)
+		if err != nil {
+			log.Print("[WARN] users not found on ranking")
+			rank = 10000
+		}
+
+		r := userHandleGetRankingResponse{
+			Rankings: rankings,
+			MyRank:   rank,
+			MyScore:  user.Score,
+		}
+		res, err := json.Marshal(r)
+		if err != nil {
+			log.Printf("[ERROR] marshal json: %v", err.Error())
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		writer.WriteHeader(http.StatusOK)
+		writer.Header().Set("Content-Type", "application/json")
+		writer.Write(res)
 	}
 }
 
@@ -152,6 +220,17 @@ type userHandleSaveScoreRequest struct {
 	Score int32 `json:"score"`
 }
 
+type userHandleGetRankingResponse struct {
+	Rankings []*ranking `json:"rankings"`
+	MyScore  int32      `json:"my_score"`
+	MyRank   int32      `json:"my_rank"`
+}
+
+type ranking struct {
+	Name  string `json:"name"`
+	Score int32  `json:"score"`
+}
+
 func calculateLevel(score int32) int32 {
 	switch {
 	case score > 500:
@@ -160,6 +239,5 @@ func calculateLevel(score int32) int32 {
 		return 2
 	default:
 		return 1
-
 	}
 }

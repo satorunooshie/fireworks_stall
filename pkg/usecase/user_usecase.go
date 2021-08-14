@@ -11,6 +11,7 @@ import (
 type UserUseCase interface {
 	SelectUser(ctx context.Context, uid string) (*userM.User, error)
 	SelectUsers(ctx context.Context) ([]*userM.User, error)
+	SelectUserScoreRank(ctx context.Context, score int32) (int32, error)
 	Insert(ctx context.Context, entity *userM.User) error
 	Update(ctx context.Context, entity *userM.User) error
 	Delete(ctx context.Context, entity *userM.User) error
@@ -43,6 +44,11 @@ func (userU *userUseCase) SelectUsers(ctx context.Context) ([]*userM.User, error
 		return nil, err
 	}
 	return users, nil
+}
+
+// SelectUserScoreRank ...
+func (userU *userUseCase) SelectUserScoreRank(ctx context.Context, score int32) (int32, error) {
+	return userU.userRepository.SelectUserScoreRank(ctx, score)
 }
 
 // Insert ...

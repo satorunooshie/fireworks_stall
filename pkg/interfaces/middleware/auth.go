@@ -88,8 +88,9 @@ func (a *Auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 			ent := &model.User{
-				UID:  token.UID,
-				Name: h,
+				UID:   token.UID,
+				Name:  h,
+				Level: 1,
 			}
 			if err := uc.Insert(ctx, ent); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)

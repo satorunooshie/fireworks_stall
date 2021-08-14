@@ -4,6 +4,7 @@ package repoimpl
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	userM "github.com/satorunooshie/fireworks_stall/pkg/domain/model"
 	userR "github.com/satorunooshie/fireworks_stall/pkg/domain/repository"
@@ -21,20 +22,33 @@ func NewUserRepoImpl(db *sql.DB) userR.UserRepository {
 
 // SelectUser
 func (userI *userRepoImpl) SelectUser(ctx context.Context, uid string) (*userM.User, error) {
-	row := userI.db.QueryRow("SELECT * FROM user WHERE uid = ?", uid)
+	row := userI.db.QueryRow("SELECT * FROM `user` WHERE `uid` = ?", uid)
 	return convertToUser(row)
 }
 
 // SelectUsers
 func (userI *userRepoImpl) SelectUsers(ctx context.Context) ([]*userM.User, error) {
-	rows, err := userI.db.Query("SELECT * FROM user WHERE ")
+	rows, err := userI.db.Query("SELECT * FROM `user` ORDER BY `score` DESC LIMIT 10")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
+	log.Println(rows == nil, rows.NextResultSet(), rows.Scan() == nil)
 	return convertToUsers(rows)
+}
+
+// SelectUserScoreRank
+func (userI *userRepoImpl) SelectUserScoreRank(ctx context.Context, score int32) (int32, error) {
+	row := userI.db.QueryRow("SELECT COUNT(*) + 1 FROM `user` WHERE `score` < ?", score)
+	e := struct {
+		Count int32
+	}{}
+	if err := row.Scan(&e.Count); err != nil {
+		return 0, err
+	}
+	return e.Count, nil
 }
 
 // Insert
@@ -76,7 +90,7 @@ func (userI *userRepoImpl) Delete(ctx context.Context, entity *userM.User) error
 // convertToUser
 func convertToUser(row *sql.Row) (*userM.User, error) {
 	user := userM.User{}
-	if err := row.Scan(&user.UID, &user.Name, &user.Score, &user.Level, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt); err != nil {
+	if err := row.Scan(&user.UID, &user.Name, &user.Score, &user.Level, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -90,20 +104,11 @@ func convertToUser(row *sql.Row) (*userM.User, error) {
 func convertToUsers(rows *sql.Rows) ([]*userM.User, error) {
 	var users []*userM.User
 	for rows.Next() {
-		var user *userM.User
-		err := rows.Scan(
-			&user.UID,
-			&user.Name,
-			&user.Score,
-			&user.Level,
-			&user.CreatedAt,
-			&user.UpdatedAt,
-			&user.DeletedAt,
-		)
-		if err != nil {
+		var user userM.User
+		if err := rows.Scan(&user.UID, &user.Name, &user.Score, &user.Level, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
-		users = append(users, user)
+		users = append(users, &user)
 	}
 	return users, nil
 }
