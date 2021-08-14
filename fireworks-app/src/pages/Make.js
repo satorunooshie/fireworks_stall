@@ -144,9 +144,9 @@ function App() {
           <g transform={`translate(${-10},${210})`}>
             <rect x={0} y={0} width={127.5} height={68} />
             {palet.map((color, idx) => {
-              /* if (level <= 1 && idx < 3) {
+              if (level <= 3 && idx < 3) {
                 return <g></g>;
-              }*/
+              }
               return (
                 <rect
                   x={5 + (idx % 4) * (25 + 5)}
@@ -170,7 +170,7 @@ function App() {
           <button onClick={() => setIndiv(false)}>一周一括</button>
           <button
             onClick={() => setIndiv(true)}
-            disabled={level >= 0 ? false : true}
+            disabled={level >= 2 ? false : true}
           >
             1つずつ
           </button>

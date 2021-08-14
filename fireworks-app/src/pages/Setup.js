@@ -9,11 +9,11 @@ function Setup() {
   const [fin, setFin] = useState(false);
   const [colorArray, setColorArray] = useState(null);
   const { color } = useParams();
-  const p = 0.5;
+  const p = Math.random(0, 1, 1);
 
   setTimeout(function () {
     console.log("time out");
-    //setFin(true);
+    setFin(true);
     //多分10秒くらいがちょうどいい
   }, 5000);
 
