@@ -1,6 +1,8 @@
 import firebase from "../config";
 import Make from "./Make";
-import { useState } from "react";
+import Score from "./Score";
+import { useState, useEffect } from "react";
+
 // import history from "history/createBrowserHistory";
 import {
   BrowserRouter as Router,
@@ -10,6 +12,17 @@ import {
   useHistory,
 } from "react-router-dom";
 function Login() {
+  const [score, setScore] = useState([]);
+  const { innerWidth: deviceWidth, innerHeight: deviceHeight } = window;
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("./dummy_data.json");
+      const data = await response.json();
+      // console.log(data);
+      setScore(data);
+    })();
+  }, []);
+  const myHighScore = score !== [] ? score.my_score : 0;
   const token = localStorage.getItem("username");
   console.log(token);
   const [logined, setLogined] = useState(false);
@@ -33,8 +46,8 @@ function Login() {
         var usename = user.displayName;
         localStorage.setItem("username", usename);
         localStorage.setItem("Authorization", "Bearer " + user.bc.Aa);
-        console.log(user.bc.Aa);
-        console.log(user);
+        // console.log(user.bc.Aa);
+        // console.log(user);
         // ...
       })
       .catch((error) => {
@@ -50,34 +63,20 @@ function Login() {
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // const signOutMessage = `
-        // // <p>Hello, ${user.displayName}!<\/p>
-        // // <button type="submit"  onClick="signOut()">サインアウト<\/button>
-        // // `;
-        // // document.getElementById('auth').innerHTML =  signOutMessage;
-        // setLogined(true);
         history.push("/make");
-        console.log("ログインしています");
       }
     });
   }
-  function logoutHandler() {
-    firebase
-      .auth()
-      .signOut()
-      .then(function () {
-        // Sign-out successful.
-      })
-      .catch(function (error) {
-        // An error happened.
-      });
-  }
+
   return (
     <Router history={history}>
       <Switch>
         {/* <Route path="/" exact component={PageOne} /> */}
         <Route path="/make/" exact>
           <Make />
+        </Route>
+        <Route path="score/" exact>
+          <Score />
         </Route>
       </Switch>
       <div
@@ -91,43 +90,79 @@ function Login() {
           position: "relative",
         }}
       >
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-
-          <button
-            onClick={loginWithTwitter}
+        <header className="App-header"></header>
+        <div
+          style={{
+            width: "150px",
+          }}
+        >
+          <h1
             style={{
-              display: "block",
-              padding: "10px",
+              padding: "0",
+              margin: "0",
+              background: "rgba(255,255,255,0.5)",
               position: "absolute",
-              bottom: "300px",
-              right: "100px",
-              color: "#fff",
-              backgroundColor: "#eb6100",
-              borderRadius: "100vh",
+              top: "20%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
             }}
           >
-            ログインして遊ぶ
-          </button>
-          <button
-            onClick={loginWithTwitter}
-            style={{
-              display: "block",
-              padding: "10px",
-              position: "absolute",
-              bottom: "200px",
-              right: "120px",
-              color: "#fff",
-              backgroundColor: "#eb6100",
-              borderRadius: "100vh",
-            }}
-          >
-            しないで遊ぶ
-          </button>
-          <button onClick={logoutHandler}>ログアウト</button>
-        </header>
+            わくわく花火屋さん
+          </h1>
+        </div>
+        <div
+          style={{
+            fontSize: "20px",
+            background: "rgba(255,255,255,0.5)",
+            padding: "20px 10px",
+            position: "absolute",
+            top: "35%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          現在のハイスコア：{myHighScore > 0 ? myHighScore : "未登録"}
+        </div>
+        <button
+          onClick={loginWithTwitter}
+          style={{
+            display: "block",
+            padding: "10px",
+            position: "absolute",
+            top: "50%",
+            left: "48%",
+            transform: "translate(-50%, -50%)",
+            color: "#fff",
+            backgroundColor: "#eb6100",
+            borderRadius: "100vh",
+          }}
+        >
+          ログインして遊ぶ
+        </button>
+        <button
+          onClick={loginWithTwitter}
+          style={{
+            display: "block",
+            padding: "10px",
+            position: "absolute",
+            top: "60%",
+            left: "48%",
+            transform: "translate(-50%, -50%)",
+            color: "#fff",
+            backgroundColor: "#eb6100",
+            borderRadius: "100vh",
+          }}
+        >
+          しないで遊ぶ
+        </button>
+        <button
+          onClick={() => {
+            history.push("/score");
+          }}
+        >
+          スコアページ
+        </button>
       </div>
     </Router>
   );
