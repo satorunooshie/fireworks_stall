@@ -4,8 +4,8 @@ let canvas;
 let fireworks = [];
 let star = [];
 
-const bottomPadding = 100;
 const testSketch = (p5) => {
+  console.log(document.documentElement);
   p5.setup = () => {
     canvas = p5.createCanvas(
       document.documentElement.clientWidth,
@@ -15,13 +15,8 @@ const testSketch = (p5) => {
     canvas.style("z-index", "-1");
     p5.colorMode(p5.RGB);
     p5.frameRate(60);
-    //  this.preStar();
     preStar();
   };
-
-  /*p5.myCustomRedrawAccordingToNewPropsHandler = (props) => {
-    if (props.rotation) rotation = (props.rotation * Math.PI) / 180;
-  };*/
 
   p5.draw = () => {
     // 背景色を設定
@@ -37,15 +32,38 @@ const testSketch = (p5) => {
     p5.noStroke();
 
     // 星を描く
-    //this.drawStar();
     drawStar();
 
     // 花火を打ち上げる間隔を調整
-    if (0 === p5.frameCount % 100) {
+    if (0 === p5.frameCount % 85 && p5.frameCount > 100) {
       // 打ち上がるスピード
       let speed = p5.random(10, 30);
       fireworks.push(
-        new FireWork(p5.random(p5.width), p5.height, 0, speed, 0.98)
+        new FireWork(
+          p5.random(p5.width),
+          p5.height,
+          0,
+          speed,
+          0.98,
+          "#fffacd",
+          "other"
+        )
+      );
+    }
+
+    //自分の花火
+    if (p5.frameCount === 100) {
+      fireworks.push(
+        new FireWork(
+          p5.width / 2,
+          p5.height,
+          0,
+          10,
+          0.98,
+          "#FFFF00",
+          "origin",
+          0.9
+        )
       );
     }
 
@@ -63,7 +81,7 @@ const testSketch = (p5) => {
 
   class FireWork {
     // 初期設定
-    constructor(x, y, vx, vy, gv) {
+    constructor(x, y, vx, vy, gv, color, user, p) {
       // フレームカウンター
       this.frame = 0;
       this.type = 0;
@@ -74,6 +92,13 @@ const testSketch = (p5) => {
       this.b = p5.random(155) + 80;
       this.a = 255;
 
+      if (color) {
+        console.log();
+        this.r = parseInt(color.substring(1, 3), 16);
+        this.g = parseInt(color.substring(3, 5), 16);
+        this.b = parseInt(color.substring(5, 7), 16);
+      }
+
       // 初期位置
       this.x = x;
       this.y = y;
@@ -82,7 +107,11 @@ const testSketch = (p5) => {
       this.w = p5.random(10, 5);
 
       // 打ち上がる高さ
-      this.maxHeight = p5.random(p5.height / 6, p5.height / 2);
+      if (user === "origin") {
+        this.maxHeight = p5.height / 6 + (p5.height / 3) * (1 - p);
+      } else {
+        this.maxHeight = p5.random(p5.height / 5, p5.height / 2);
+      }
       this.fireHeight = p5.height - this.maxHeight;
 
       // 重力
@@ -97,10 +126,17 @@ const testSketch = (p5) => {
 
       // 消えてから爆発までの遅延時間
       this.exDelay = p5.random(10, 40);
-      // 爆発の大きさ
-      this.large = p5.random(5, 15);
-      // 爆発の玉の数
-      this.ball = p5.random(20, 100);
+
+      if (user === "origin") {
+        // 爆発の大きさ
+        this.large = p5.random(5, 15);
+        // 爆発の玉の数
+        this.ball = p5.random(50, 100);
+      } else {
+        this.large = p5.random(3, 5);
+        this.ball = p5.random(20, 80);
+      }
+
       // 爆発から消えるまでの長さ
       this.exend = p5.random(20, 40);
       // 爆発のブレーキ
