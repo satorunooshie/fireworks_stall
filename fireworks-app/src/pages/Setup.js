@@ -9,7 +9,7 @@ function Setup() {
   const [fin, setFin] = useState(false);
   const [colorArray, setColorArray] = useState(null);
   const { color } = useParams();
-  const p = Math.random(0, 1, 1);
+  const p = 1; //Math.random(0,1);
 
   setTimeout(function () {
     console.log("time out");
@@ -63,8 +63,8 @@ function Setup() {
               <div>
                 <div style={{ textAlign: "center" }}>
                   <div style={{ fontSize: "1.75rem" }}>けっかはっぴょう</div>
-                  <p style={{ fontSize: "3rem", margin: "0.5rem" }}>
-                    <b>{Math.round(300 * p)}</b>m
+                  <p style={{ fontSize: "1rem", margin: "0.5rem" }}>
+                    <b>{Math.round(300 * p)}</b>m{p}
                   </p>
                 </div>
                 <div className="button-block">

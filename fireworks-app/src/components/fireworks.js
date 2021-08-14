@@ -24,16 +24,18 @@ const testSketch = (p5) => {
     if (props.color) {
       originColor = props.color;
     }
+    //console.log(props.p);
     if (props.p) {
       p = props.p;
     }
     if (props.colors) {
-      console.log(props.colors);
+      // console.log(props.colors);
       colorArray = props.colors;
     }
   };
   console.log(originColor);
   console.log(colorArray);
+  console.log(p);
 
   p5.draw = () => {
     // 背景色を設定
@@ -52,7 +54,7 @@ const testSketch = (p5) => {
     drawStar();
 
     // 花火を打ち上げる間隔を調整
-    if (0 === p5.frameCount % 120 && p5.frameCount > 100) {
+    if (0 === p5.frameCount % 50 && p5.frameCount > 200) {
       // 打ち上がるスピード
       let speed = p5.random(10, 30);
       fireworks.push(
@@ -66,7 +68,8 @@ const testSketch = (p5) => {
           "#fffacd",
           "#fffacd",
           "#fffacd",
-          "other"
+          "other",
+          p5.random(0.1, 0.35)
         )
       );
     }
@@ -84,8 +87,6 @@ const testSketch = (p5) => {
           colorArray[1],
           colorArray[2] || null,
           colorArray[3] || null,
-          //"#ffffff",
-          //"#123456",
           "origin",
           p,
           colorArray
@@ -121,6 +122,8 @@ const testSketch = (p5) => {
       p,
       colorArray
     ) {
+      this.p = p;
+
       // フレームカウンター
       this.frame = 0;
       this.type = 0;
@@ -169,13 +172,9 @@ const testSketch = (p5) => {
 
       // 玉の大きさ
       this.w = p5.random(10, 5);
+      //console.log(p);
+      this.maxHeight = p5.height / 7 + ((p5.height * 6) / 7) * (1 - this.p);
 
-      // 打ち上がる高さ
-      if (user === "origin") {
-        this.maxHeight = p5.height / 7 + 500 * (1 - p);
-      } else {
-        this.maxHeight = p5.random(p5.height / 5, p5.height / 2);
-      }
       this.fireHeight = p5.height - this.maxHeight;
 
       // 重力
