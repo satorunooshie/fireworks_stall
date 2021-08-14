@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/satorunooshie/fireworks_stall/pkg/infrastructure/mysql/repoimpl"
+	"github.com/satorunooshie/fireworks_stall/pkg/interfaces/handler"
 	"github.com/satorunooshie/fireworks_stall/pkg/interfaces/middleware"
+	"github.com/satorunooshie/fireworks_stall/pkg/usecase"
 )
 
 func Route(h *http.ServeMux, db *sql.DB) {
@@ -27,4 +30,9 @@ func Route(h *http.ServeMux, db *sql.DB) {
 		}
 		_ = json.NewEncoder(w).Encode(health)
 	}))
+	ur := repoimpl.NewUserRepoImpl(db)
+	uu := usecase.NewUserUsecase(ur)
+	u := handler.NewUserHandler(uu)
+
+	h.HandleFunc("/getLevel", u.HandleGetLevel())
 }

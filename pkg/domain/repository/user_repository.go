@@ -8,7 +8,8 @@ import (
 )
 
 type UserRepository interface {
-	Select(ctx context.Context, uid string) ([]*userM.User, error)
+	SelectUser(ctx context.Context, uid string) (*userM.User, error)
+	SelectUsers(ctx context.Context) ([]*userM.User, error)
 	Insert(ctx context.Context, entity *userM.User) error
 	Update(ctx context.Context, entity *userM.User) error
 	Delete(ctx context.Context, entity *userM.User) error

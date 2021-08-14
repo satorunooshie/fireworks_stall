@@ -78,7 +78,7 @@ func (a *Auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 		}
 		uri := repoimpl.NewUserRepoImpl(a.db)
 		uc := usecase.NewUserUsecase(uri)
-		user, err := uc.Select(ctx, token.UID)
+		user, err := uc.SelectUser(ctx, token.UID)
 		if user == nil {
 			h := r.Header.Get("username")
 			if h == "" {
