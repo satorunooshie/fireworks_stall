@@ -3,7 +3,24 @@ import { Link, matchPath } from "react-router-dom";
 import "./Make.css";
 
 function App() {
-  const [color, setColor] = useState("#FFFF00");
+  const [color, setColor] = useState("#fffacd");
+  const [level, setLevel] = useState(0);
+  const [indiv, setIndiv] = useState(false);
+
+  useEffect(() => {
+    const f = async () => {
+      const response = await fetch("http://localhost:8888/level", {
+        headers: {
+          Authorization: localStorage.getItem("Authorization"),
+          username: localStorage.getItem("username"),
+        },
+      });
+      const data = await response.json();
+      setLevel(data.level);
+    };
+    f();
+  }, []);
+  console.log(level);
 
   const margin = {
     left: 20,
@@ -45,10 +62,14 @@ function App() {
 
   const c = Math.PI / 180;
 
-  function colorChange(gunpowders, size, color) {
+  function colorChange(gunpowders, size, color, id) {
     const newGunpowders = JSON.parse(JSON.stringify(gunpowders));
-    for (let i = 0; i < newGunpowders.length; i++) {
-      newGunpowders[i].color = color;
+    if (!indiv) {
+      for (let i = 0; i < newGunpowders.length; i++) {
+        newGunpowders[i].color = color;
+      }
+    } else {
+      newGunpowders[id].color = color;
     }
     if (size === "small") {
       setSmallGunpowder(newGunpowders);
@@ -57,7 +78,31 @@ function App() {
     }
   }
 
-  const handleChange = (e) => setColor(e.target.value);
+  function getColorArray() {
+    let colors = new Set();
+    for (const c of smallGunpowder) {
+      if (c.color !== "black") {
+        colors.add(c.color);
+      } else {
+        colors.add("#fffacd");
+      }
+    }
+    for (const c of bigGunpowder) {
+      if (c.color !== "black") {
+        colors.add(c.color);
+      } else {
+        colors.add("#fffacd");
+      }
+    }
+
+    let colorCodeChar = "";
+    for (const c of colors) {
+      colorCodeChar += c.slice(1, 7);
+    }
+    return colorCodeChar;
+  }
+
+  //const handleChange = (e) => setColor(e.target.value);
 
   return (
     <div className="table">
@@ -76,7 +121,9 @@ function App() {
                   cy={50 * Math.sin(22.5 * s.id * c)}
                   r={9.5}
                   fill={s.color}
-                  onClick={() => colorChange(smallGunpowder, "small", color)}
+                  onClick={() =>
+                    colorChange(smallGunpowder, "small", color, s.id)
+                  }
                 />
               </g>
             );
@@ -89,7 +136,7 @@ function App() {
                   cy={86 * Math.sin(18 * s.id * c)}
                   r={13}
                   fill={s.color}
-                  onClick={() => colorChange(bigGunpowder, "big", color)}
+                  onClick={() => colorChange(bigGunpowder, "big", color, s.id)}
                 />
               </g>
             );
@@ -97,7 +144,9 @@ function App() {
           <g transform={`translate(${-10},${210})`}>
             <rect x={0} y={0} width={127.5} height={68} />
             {palet.map((color, idx) => {
-              console.log(Math.floor(idx % 4));
+              if (level <= 3 && idx < 3) {
+                return <g></g>;
+              }
               return (
                 <rect
                   x={5 + (idx % 4) * (25 + 5)}
@@ -118,8 +167,13 @@ function App() {
       </div>
       <div>
         <div>
-          <button>一周一括</button>
-          <button disabled>1つずつ</button>
+          <button onClick={() => setIndiv(false)}>一周一括</button>
+          <button
+            onClick={() => setIndiv(true)}
+            disabled={level >= 2 ? false : true}
+          >
+            1つずつ
+          </button>
         </div>
         {/*<div>
           <label>
@@ -164,7 +218,7 @@ function App() {
       </div>
       <div>
         <button>
-          <Link to={`/setup/${color.slice(1, 7)}`}>打ち上げる</Link>
+          <Link to={`/setup/${getColorArray()}`}>打ち上げる</Link>
         </button>
       </div>
     </div>

@@ -5,6 +5,7 @@ let fireworks = [];
 let star = [];
 let originColor = "red";
 let p = 0;
+let colorArray = [];
 
 const testSketch = (p5) => {
   p5.setup = () => {
@@ -23,12 +24,18 @@ const testSketch = (p5) => {
     if (props.color) {
       originColor = props.color;
     }
+    //console.log(props.p);
     if (props.p) {
       p = props.p;
     }
-    //console.log(originColor);
+    if (props.colors) {
+      // console.log(props.colors);
+      colorArray = props.colors;
+    }
   };
-  //console.log(originColor);
+  console.log(originColor);
+  console.log(colorArray);
+  console.log(p);
 
   p5.draw = () => {
     // 背景色を設定
@@ -47,7 +54,7 @@ const testSketch = (p5) => {
     drawStar();
 
     // 花火を打ち上げる間隔を調整
-    if (0 === p5.frameCount % 85 && p5.frameCount > 100) {
+    if (0 === p5.frameCount % 50 && p5.frameCount > 200) {
       // 打ち上がるスピード
       let speed = p5.random(10, 30);
       fireworks.push(
@@ -59,7 +66,10 @@ const testSketch = (p5) => {
           0.98,
           "#fffacd",
           "#fffacd",
-          "other"
+          "#fffacd",
+          "#fffacd",
+          "other",
+          p5.random(0.1, 0.35)
         )
       );
     }
@@ -73,10 +83,13 @@ const testSketch = (p5) => {
           0,
           10,
           0.98,
-          originColor,
-          "#fffacd",
+          colorArray[0],
+          colorArray[1],
+          colorArray[2] || null,
+          colorArray[3] || null,
           "origin",
-          p
+          p,
+          colorArray
         )
       );
     }
@@ -95,32 +108,62 @@ const testSketch = (p5) => {
 
   class FireWork {
     // 初期設定
-    constructor(x, y, vx, vy, gv, color, color2, user, p) {
+    constructor(
+      x,
+      y,
+      vx,
+      vy,
+      gv,
+      color,
+      color2,
+      color3,
+      color4,
+      user,
+      p,
+      colorArray
+    ) {
+      this.p = p;
+
       // フレームカウンター
       this.frame = 0;
       this.type = 0;
       this.next = 0;
       // 花火の色
-      this.r = p5.random(155) + 80;
+      /*this.r = p5.random(155) + 80;
       this.g = p5.random(155) + 80;
-      this.b = p5.random(155) + 80;
+      this.b = p5.random(155) + 80;*/
       this.a = 255;
 
       if (color) {
-        //console.log();
         this.r = parseInt(color.substring(1, 3), 16);
         this.g = parseInt(color.substring(3, 5), 16);
         this.b = parseInt(color.substring(5, 7), 16);
       }
 
-      this.r2 = 255; //p5.random(105) + 80;
+      /*this.r2 = 255; //p5.random(105) + 80;
       this.g2 = 0; //p5.random(105) + 80;
-      this.b2 = 0; //p5.random(105) + 80;
+      this.b2 = 0; //p5.random(105) + 80;*/
       //console.log(color);
       if (color2) {
         this.r2 = parseInt(color2.substring(1, 3), 16);
         this.g2 = parseInt(color2.substring(3, 5), 16);
         this.b2 = parseInt(color2.substring(5, 7), 16);
+      }
+
+      /*this.r3 = 255; //p5.random(105) + 80;
+      this.g3 = 0; //p5.random(105) + 80;
+      this.b3 = 0; //p5.random(105) + 80;*/
+      //console.log(color);
+      if (color3) {
+        this.r3 = parseInt(color2.substring(1, 3), 16);
+        this.g3 = parseInt(color2.substring(3, 5), 16);
+        this.b3 = parseInt(color2.substring(5, 7), 16);
+      }
+
+      if (color4) {
+        this.r4 = parseInt(color2.substring(1, 3), 16);
+        this.g4 = parseInt(color2.substring(3, 5), 16);
+        this.b4 = parseInt(color2.substring(5, 7), 16);
       }
 
       // 初期位置
@@ -129,13 +172,9 @@ const testSketch = (p5) => {
 
       // 玉の大きさ
       this.w = p5.random(10, 5);
+      //console.log(p);
+      this.maxHeight = p5.height / 7 + ((p5.height * 6) / 7) * (1 - this.p);
 
-      // 打ち上がる高さ
-      if (user === "origin") {
-        this.maxHeight = p5.height / 7 + 500 * (1 - p);
-      } else {
-        this.maxHeight = p5.random(p5.height / 5, p5.height / 2);
-      }
       this.fireHeight = p5.height - this.maxHeight;
 
       // 重力
@@ -280,6 +319,12 @@ const testSketch = (p5) => {
               this.r2,
               this.g2,
               this.b2,
+              this.r3,
+              this.g3,
+              this.b3,
+              this.r4,
+              this.g4,
+              this.b4,
               this.user
             )
           );
@@ -333,7 +378,7 @@ const testSketch = (p5) => {
 
   // 残像処理用クラス
   class Afterimage {
-    constructor(r, g, b, x, y, w, a, r2, g2, b2, user) {
+    constructor(r, g, b, x, y, w, a, r2, g2, b2, r3, g3, b3, r4, g4, b4, user) {
       this.frame = 0;
       this.r = r;
       this.g = g;
@@ -345,6 +390,12 @@ const testSketch = (p5) => {
       this.r2 = r2;
       this.g2 = g2;
       this.b2 = b2;
+      this.r3 = r3;
+      this.g3 = g3;
+      this.b3 = b3;
+      this.r4 = r3;
+      this.g4 = g3;
+      this.b4 = b3;
       this.user = user;
       this.vx = p5.random(-0.24, 0.24);
       this.vy = p5.random(0.2, 0.8);
@@ -365,6 +416,12 @@ const testSketch = (p5) => {
         this.r2 += 4;
         this.g2 += 4;
         this.b2 += 4;
+        this.r3 += 4;
+        this.g3 += 4;
+        this.b3 += 4;
+        this.r4 += 4;
+        this.g4 += 4;
+        this.b4 += 4;
         this.x = this.x + this.vx;
         this.y = this.y + this.vy;
         if (0 < this.w) {
@@ -403,6 +460,12 @@ const testSketch = (p5) => {
           this.r2,
           this.g2,
           this.b2,
+          this.r3,
+          this.g3,
+          this.b3,
+          this.r4,
+          this.g4,
+          this.b4,
           this.user
         );
 
@@ -412,6 +475,12 @@ const testSketch = (p5) => {
         this.r2 += 2.5;
         this.g2 += 2.5;
         this.b2 += 2.5;
+        this.r3 += 2.5;
+        this.g3 += 2.5;
+        this.b3 += 2.5;
+        this.r4 += 2.5;
+        this.g4 += 2.5;
+        this.b4 += 2.5;
         this.x = this.x + this.vx;
         this.y = this.y + this.vy;
         if (0 < this.w) {
@@ -421,16 +490,22 @@ const testSketch = (p5) => {
       }
     }
 
-    update(r, g, b, x, y, w, a, r2, g2, b2, user) {
+    update(r, g, b, x, y, w, a, r2, g2, b2, r3, g3, b3, r4, g4, b4, user) {
       this.frame++;
       let c = p5.color(r, g, b);
       // console.log(user);
 
-      if (this.frame % 2 === 0) {
+      if (this.frame % 4 === 0) {
         c = p5.color(r, g, b);
         p5.fill(c);
-      } else {
+      } else if (this.frame % 4 === 1) {
         c = p5.color(r2, g2, b2);
+        p5.fill(c);
+      } else if (this.frame % 4 === 3) {
+        c = p5.color(r3, g3, b3);
+        p5.fill(c);
+      } else {
+        c = p5.color(r4, g4, b4);
         p5.fill(c);
       }
 
