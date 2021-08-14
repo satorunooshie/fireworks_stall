@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import P5Wrapper from "react-p5-wrapper";
 import testSketch from "../components/fireworks";
@@ -14,6 +14,24 @@ function Setup() {
     //setFin(true);
     //多分10秒くらいがちょうどいい
   }, 5000);
+
+  useEffect(() => {
+    const f = async () => {
+      const response = await fetch("http://localhost:8888/score", {
+        //TODO:PUTに変更
+        method: "POST",
+        headers: {
+          Authorization: localStorage.getItem("Authorization"),
+          username: localStorage.getItem("username"),
+        },
+        body: JSON.stringify({ score: Math.round(300 * p) }),
+      });
+
+      const data = await response.json();
+      //setLevel(data.level);
+    };
+    f();
+  }, []);
 
   return (
     <div className="container">

@@ -47,7 +47,7 @@ const testSketch = (p5) => {
     drawStar();
 
     // 花火を打ち上げる間隔を調整
-    if (0 === p5.frameCount % 85 && p5.frameCount > 100) {
+    if (0 === p5.frameCount % 120 && p5.frameCount > 100) {
       // 打ち上がるスピード
       let speed = p5.random(10, 30);
       fireworks.push(

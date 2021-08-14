@@ -4,6 +4,22 @@ import "./Make.css";
 
 function App() {
   const [color, setColor] = useState("#FFFF00");
+  const [level, setLevel] = useState(0);
+
+  useEffect(() => {
+    const f = async () => {
+      const response = await fetch("http://localhost:8888/level", {
+        headers: {
+          Authorization: localStorage.getItem("Authorization"),
+          username: localStorage.getItem("username"),
+        },
+      });
+      const data = await response.json();
+      setLevel(data.level);
+    };
+    f();
+  }, []);
+  console.log(level);
 
   const margin = {
     left: 20,
@@ -57,7 +73,7 @@ function App() {
     }
   }
 
-  const handleChange = (e) => setColor(e.target.value);
+  //const handleChange = (e) => setColor(e.target.value);
 
   return (
     <div className="table">
@@ -97,7 +113,9 @@ function App() {
           <g transform={`translate(${-10},${210})`}>
             <rect x={0} y={0} width={127.5} height={68} />
             {palet.map((color, idx) => {
-              console.log(Math.floor(idx % 4));
+              if (level <= 1 && idx < 3) {
+                return <g></g>;
+              }
               return (
                 <rect
                   x={5 + (idx % 4) * (25 + 5)}
@@ -119,7 +137,7 @@ function App() {
       <div>
         <div>
           <button>一周一括</button>
-          <button disabled>1つずつ</button>
+          <button disabled={level >= 3 ? false : true}>1つずつ</button>
         </div>
         {/*<div>
           <label>
