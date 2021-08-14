@@ -5,9 +5,11 @@
 }
 
 .button-block {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+button {
+  margin: 1rem;
 }
 
 .score {
@@ -15,4 +17,18 @@
   /* color: white;*/
   color: black;
   height: 100%;
+  padding: 0.75rem;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.score-card {
+  margin-top: 35vh;
+  height: 200px;
+  display: flex;
+  justify-content: center;
 }

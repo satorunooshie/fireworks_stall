@@ -120,7 +120,7 @@ const testSketch = (p5) => {
 
       // 打ち上がる高さ
       if (user === "origin") {
-        this.maxHeight = p5.height / 6 + (p5.height / 3) * (1 - p);
+        this.maxHeight = p5.height / 7 + 500 * (1 - p);
       } else {
         this.maxHeight = p5.random(p5.height / 5, p5.height / 2);
       }
