@@ -19,23 +19,23 @@ import (
 	"github.com/satorunooshie/fireworks_stall/pkg/usecase"
 )
 
-type auth struct {
+type Auth struct {
 	db *sql.DB
 }
 
-func NewAuth(db *sql.DB) *auth {
-	return &auth{
+func NewAuth(db *sql.DB) *Auth {
+	return &Auth{
 		db: db,
 	}
 }
 
 //nolint
-func (a *auth) Auth(next http.HandlerFunc) http.HandlerFunc {
+func (a *Auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		idToken := strings.Replace(authHeader, "Bearer ", "", 1)
 		if idToken == "" {
-			log.Printf("[INFO] auth::Auth: %v\n", errors.New("header is not set"))
+			log.Printf("[INFO] middleware::Auth: %v\n", errors.New("header is not set"))
 			w.WriteHeader(http.StatusBadRequest)
 			// TODO: Delete debug code instead return json error message
 			_, _ = w.Write([]byte("empty token\n"))
@@ -44,7 +44,7 @@ func (a *auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 
 		path, err := a.getFilePath()
 		if err != nil {
-			log.Printf("[ERROR] auth::Auth::getFilePath: %v\n", err)
+			log.Printf("[ERROR] middleware::Auth::getFilePath: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -57,14 +57,14 @@ func (a *auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 
 		app, err := firebase.NewApp(ctx, nil, opt)
 		if err != nil {
-			log.Printf("[ERROR] auth::Auth::firebase.NewApp: %v\n", err)
+			log.Printf("[ERROR] middleware::Auth::firebase.NewApp: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		auth, err := app.Auth(ctx)
 		if err != nil {
-			log.Printf("[ERROR] auth::Auth::app.Auth: %v\n", err)
+			log.Printf("[ERROR] middleware::Auth::app.Auth: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -105,7 +105,7 @@ func (a *auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 }
 
 // NOTE: 実行パスが違うのでトリミング
-func (a *auth) getFilePath() (string, error) {
+func (a *Auth) getFilePath() (string, error) {
 	const (
 		dirname  = "fireworks_stall"
 		filename = "firebase-sdk.json"
