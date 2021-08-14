@@ -5,6 +5,7 @@ let fireworks = [];
 let star = [];
 let originColor = "red";
 let p = 0;
+let colorArray = [];
 
 const testSketch = (p5) => {
   p5.setup = () => {
@@ -26,9 +27,13 @@ const testSketch = (p5) => {
     if (props.p) {
       p = props.p;
     }
-    //console.log(originColor);
+    if (props.colors) {
+      console.log(props.colors);
+      colorArray = props.colors;
+    }
   };
-  //console.log(originColor);
+  console.log(originColor);
+  console.log(colorArray);
 
   p5.draw = () => {
     // 背景色を設定
@@ -73,8 +78,10 @@ const testSketch = (p5) => {
           0,
           10,
           0.98,
-          originColor,
-          "#fffacd",
+          colorArray[0],
+          colorArray[1],
+          //"#ffffff",
+          //"#123456",
           "origin",
           p
         )

@@ -7,8 +7,10 @@ import { Link, useParams } from "react-router-dom";
 
 function Setup() {
   const [fin, setFin] = useState(false);
+  const [colorArray, setColorArray] = useState(null);
   const { color } = useParams();
   const p = 0.5;
+
   setTimeout(function () {
     console.log("time out");
     //setFin(true);
@@ -17,6 +19,16 @@ function Setup() {
 
   useEffect(() => {
     const f = async () => {
+      const ca = [];
+      for (let i = 0; i < color.length / 6; i++) {
+        if (i === 0) {
+          ca.push(`#${color.slice(0, 6)}`);
+        } else {
+          ca.push(`#${color.slice(6 * i, 6 * (i + 1))}`);
+        }
+      }
+      setColorArray(ca);
+
       const response = await fetch("http://localhost:8888/score", {
         //TODO:PUTに変更
         method: "POST",
@@ -27,16 +39,21 @@ function Setup() {
         body: JSON.stringify({ score: Math.round(300 * p) }),
       });
 
-      const data = await response.json();
+      //const data = await response.json();
       //setLevel(data.level);
     };
     f();
-  }, []);
+  }, [color]);
 
   return (
     <div className="container">
       <div>
-        <P5Wrapper sketch={testSketch} color={`#${color}`} p={p} />
+        <P5Wrapper
+          sketch={testSketch}
+          color={`#${color}`}
+          colors={colorArray}
+          p={p}
+        />
       </div>
 
       {fin ? (

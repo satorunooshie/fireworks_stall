@@ -3,7 +3,7 @@ import { Link, matchPath } from "react-router-dom";
 import "./Make.css";
 
 function App() {
-  const [color, setColor] = useState("#FFFF00");
+  const [color, setColor] = useState("#fffacd");
   const [level, setLevel] = useState(0);
 
   useEffect(() => {
@@ -71,6 +71,30 @@ function App() {
     } else {
       setBigGunpowder(newGunpowders);
     }
+  }
+
+  function getColorArray() {
+    let colors = new Set();
+    for (const c of smallGunpowder) {
+      if (c.color !== "black") {
+        colors.add(c.color);
+      } else {
+        colors.add("#fffacd");
+      }
+    }
+    for (const c of bigGunpowder) {
+      if (c.color !== "black") {
+        colors.add(c.color);
+      } else {
+        colors.add("#fffacd");
+      }
+    }
+
+    let colorCodeChar = "";
+    for (const c of colors) {
+      colorCodeChar += c.slice(1, 7);
+    }
+    return colorCodeChar;
   }
 
   //const handleChange = (e) => setColor(e.target.value);
@@ -182,7 +206,7 @@ function App() {
       </div>
       <div>
         <button>
-          <Link to={`/setup/${color.slice(1, 7)}`}>打ち上げる</Link>
+          <Link to={`/setup/${getColorArray()}`}>打ち上げる</Link>
         </button>
       </div>
     </div>
