@@ -1,0 +1,5 @@
+firebase-sdk.json
+.DS_Store
+.idea/
+*-data/
+tmp/
