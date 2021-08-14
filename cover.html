@@ -55,13 +55,17 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/satorunooshie/fireworks_stall/pkg/errors/errors.go (41.8%)</option>
+				<option value="file0">github.com/satorunooshie/fireworks_stall/pkg/errors/errors.go (0.0%)</option>
 				
-				<option value="file1">github.com/satorunooshie/fireworks_stall/pkg/errors/errors_api.go (35.4%)</option>
+				<option value="file1">github.com/satorunooshie/fireworks_stall/pkg/errors/errors_api.go (43.3%)</option>
 				
-				<option value="file2">github.com/satorunooshie/fireworks_stall/pkg/errors/errors_level.go (55.6%)</option>
+				<option value="file2">github.com/satorunooshie/fireworks_stall/pkg/errors/errors_level.go (77.8%)</option>
 				
 				<option value="file3">github.com/satorunooshie/fireworks_stall/pkg/errors/errors_status.go (0.0%)</option>
+				
+				<option value="file4">github.com/satorunooshie/fireworks_stall/pkg/interfaces/middleware/auth.go (65.9%)</option>
+				
+				<option value="file5">github.com/satorunooshie/fireworks_stall/pkg/interfaces/middleware/cors.go (0.0%)</option>
 				
 				</select>
 			</div>
@@ -83,130 +87,129 @@ import (
         "golang.org/x/xerrors"
 )
 
-var Nothing bool
-
-func create(msg string) *appError <span class="cov8" title="1">{
-        var e appError
-        e.message = msg
-        e.frame = xerrors.Caller(2)
-        return &amp;e
-}</span>
-
-func New(msg string) AppError <span class="cov0" title="0">{
-        return create(msg)
-}</span>
-
-func Errorf(format string, args ...interface{}) AppError <span class="cov0" title="0">{
-        return create(fmt.Sprintf(format, args...))
-}</span>
-
-func Wrap(err error, msg ...string) AppError <span class="cov8" title="1">{
-        if err == nil </span><span class="cov8" title="1">{
-                return nil
-        }</span>
-
-        <span class="cov8" title="1">var m string
-        if len(msg) != 0 </span><span class="cov8" title="1">{
-                m = msg[0]
-        }</span>
-        <span class="cov8" title="1">e := create(m)
-        e.next = err
-        return e</span>
-}
-
-func Wrapf(err error, format string, args ...interface{}) AppError <span class="cov0" title="0">{
-        e := create(fmt.Sprintf(format, args...))
-        e.next = err
-        return e
-}</span>
-
-func As(err error, target interface{}) bool <span class="cov0" title="0">{
-        return xerrors.As(err, target)
-}</span>
-
-func AsAppError(err error) *appError <span class="cov8" title="1">{
-        if err == nil </span><span class="cov8" title="1">{
-                return nil
-        }</span>
-
-        <span class="cov8" title="1">var e *appError
-        if xerrors.As(err, &amp;e) </span><span class="cov8" title="1">{
-                return e
-        }</span>
-        <span class="cov0" title="0">return nil</span>
-}
-
 type appError struct {
-        // 標準のエラー仕様を満たす変数
+        // 標準を満たすエラー
         next    error
         message string
         frame   xerrors.Frame
 
-        // 独自の拡張仕様の変数
         data  []map[string]interface{}
         level level
 
-        // APIエラー
         code        string
         infoMessage string
         status      int
 }
 
 func (e *appError) Error() string <span class="cov0" title="0">{
-        // 一番下位層のメッセージを取り出す
         next := AsAppError(e.next)
         if next != nil </span><span class="cov0" title="0">{
                 return next.Error()
         }</span>
         <span class="cov0" title="0">if e.next == nil </span><span class="cov0" title="0">{
-                if e.message != `` </span><span class="cov0" title="0">{
-                        return e.message
+                if e.message == `` </span><span class="cov0" title="0">{
+                        return `no message`
                 }</span>
-                <span class="cov0" title="0">return `no message`</span>
+                <span class="cov0" title="0">return e.message</span>
         }
         <span class="cov0" title="0">return e.next.Error()</span>
 }
 
-func (e *appError) Is(err error) bool <span class="cov8" title="1">{
-        if er := AsAppError(err); er != nil </span><span class="cov8" title="1">{
+func (e *appError) Is(err error) bool <span class="cov0" title="0">{
+        if er := AsAppError(err); er != nil </span><span class="cov0" title="0">{
                 return e.Code() == er.Code()
         }</span>
         <span class="cov0" title="0">return false</span>
 }
 
-func (e *appError) Unwrap() error              <span class="cov0" title="0">{ return e.next }</span>
-func (e *appError) Format(s fmt.State, v rune) <span class="cov0" title="0">{ xerrors.FormatError(e, s, v) }</span>
+func (e *appError) Unwrap() error <span class="cov0" title="0">{
+        return e.next
+}</span>
+
+func (e *appError) Format(s fmt.State, v rune) <span class="cov0" title="0">{
+        xerrors.FormatError(e, s, v)
+}</span>
 
 func (e *appError) FormatError(p xerrors.Printer) error <span class="cov0" title="0">{
-        var message string
+        var s string
         if e.level != "" </span><span class="cov0" title="0">{
-                message += fmt.Sprintf("[%s] ", e.level)
+                s += fmt.Sprintf("[%s] ", e.level)
         }</span>
         <span class="cov0" title="0">if e.code != "" </span><span class="cov0" title="0">{
-                message += fmt.Sprintf("[%s] ", e.code)
+                s += fmt.Sprintf("[%s] ", e.code)
         }</span>
         <span class="cov0" title="0">if e.message != "" </span><span class="cov0" title="0">{
-                message += fmt.Sprintf("%s", e.message)
+                s += e.message
         }</span>
         <span class="cov0" title="0">if len(e.data) != 0 </span><span class="cov0" title="0">{
-                if message != "" </span><span class="cov0" title="0">{
-                        message += "\n"
+                if s != "" </span><span class="cov0" title="0">{
+                        s += "\n"
                 }</span>
-                <span class="cov0" title="0">message += fmt.Sprintf("data: %+v", e.data)</span>
+                <span class="cov0" title="0">s += fmt.Sprintf("data: %+v", e.data)</span>
         }
-
-        <span class="cov0" title="0">p.Print(message)
+        <span class="cov0" title="0">p.Print(s)
         e.frame.Format(p)
         return e.next</span>
 }
 
-func (e *appError) AddData(field string, data interface{}) AppError <span class="cov8" title="1">{
-        if e.data == nil </span><span class="cov8" title="1">{
+func (e *appError) Add(field string, data interface{}) AppError <span class="cov0" title="0">{
+        if e.data == nil </span><span class="cov0" title="0">{
                 e.data = make([]map[string]interface{}, 0)
         }</span>
-        <span class="cov8" title="1">e.data = append(e.data, map[string]interface{}{field: data})
+        <span class="cov0" title="0">e.data = append(e.data, map[string]interface{}{field: data})
         return e</span>
 }
+
+func New(s string) AppError <span class="cov0" title="0">{
+        return create(s)
+}</span>
+
+func Errorf(format string, args ...interface{}) AppError <span class="cov0" title="0">{
+        return create(fmt.Sprintf(format, args...))
+}</span>
+
+func Wrap(err error, s ...string) AppError <span class="cov0" title="0">{
+        if err == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov0" title="0">var m string
+        if len(s) != 0 </span><span class="cov0" title="0">{
+                m = s[0]
+        }</span>
+        <span class="cov0" title="0">e := create(m)
+        e.next = err
+        return e</span>
+}
+
+func Wrapf(format string, err error, args ...interface{}) AppError <span class="cov0" title="0">{
+        e := create(fmt.Sprintf(format, args...))
+        e.next = err
+        return e
+}</span>
+
+//nolint
+func AsAppError(err error) *appError <span class="cov0" title="0">{
+        if err == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">var e *appError
+        if As(err, &amp;e) </span><span class="cov0" title="0">{
+                return e
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func As(err error, target interface{}) bool <span class="cov0" title="0">{
+        return xerrors.As(err, target)
+}</span>
+
+func create(s string) *appError <span class="cov0" title="0">{
+        var e appError
+        e.message = s
+        e.frame = xerrors.Caller(2)
+        return &amp;e
+}</span>
 </pre>
 		
 		<pre class="file" id="file1" style="display: none">package errors
@@ -218,105 +221,44 @@ import (
         "golang.org/x/xerrors"
 )
 
-func newError(code string, msg string) *appError <span class="cov8" title="1">{
-        e := &amp;appError{
-                code:        code,
-                infoMessage: msg,
-        }
-        return e
-}</span>
-
-func newBadRequest(code, msg string) *appError <span class="cov8" title="1">{
-        e := newError(code, msg)
-        e.status = http.StatusBadRequest
-        e.Info()
-        return e
-}</span>
-
-func newUnauthorized(code, msg string) *appError <span class="cov0" title="0">{
-        e := newError(code, msg)
-        e.status = http.StatusUnauthorized
-        e.Info()
-        return e
-}</span>
-
-func newForbidden(code, msg string) *appError <span class="cov0" title="0">{
-        e := newError(code, msg)
-        e.status = http.StatusForbidden
-        e.Info()
-        return e
-}</span>
-
-func newConflict(code, msg string) *appError <span class="cov0" title="0">{
-        e := newError(code, msg)
-        e.status = http.StatusConflict
-        e.Info()
-        return e
-}</span>
-func newNotFound(code, msg string) *appError <span class="cov0" title="0">{
-        e := newError(code, msg)
-        e.status = http.StatusNotFound
-        e.Info()
-        return e
-}</span>
-
-func newInternalServerError(code, msg string) *appError <span class="cov8" title="1">{
-        e := newError(code, msg)
-        e.status = http.StatusInternalServerError
-        e.Crit()
-        return e
-}</span>
-
-func (e appError) new(a string) *appError <span class="cov8" title="1">{
-        e.message = a
-        e.frame = xerrors.Caller(2)
-        return &amp;e
-}</span>
-
-func (e appError) New(msg ...string) AppError <span class="cov8" title="1">{
-        var m string
-        if len(msg) == 0 </span><span class="cov8" title="1">{
-                m = e.Code()
-        }</span> else<span class="cov8" title="1"> {
-                m = msg[0]
+func (e *appError) New(s ...string) AppError <span class="cov8" title="1">{
+        m := e.code
+        if len(s) != 0 </span><span class="cov0" title="0">{
+                m = s[0]
         }</span>
         <span class="cov8" title="1">return e.new(m)</span>
 }
 
-func (e appError) Errorf(format string, args ...interface{}) AppError <span class="cov0" title="0">{
-        return e.new(fmt.Sprintf(format, args...))
+func (e *appError) Errorf(format string, args ...interface{}) AppError <span class="cov0" title="0">{
+        return e.New(fmt.Sprintf(format, args...))
 }</span>
 
-func (e appError) Wrap(err error, msg ...string) AppError <span class="cov0" title="0">{
-        var m string
-        if len(msg) == 0 </span><span class="cov0" title="0">{
-                m = e.Code()
-        }</span> else<span class="cov0" title="0"> {
-                m = msg[0]
+func (e *appError) Wrap(err error, s ...string) AppError <span class="cov8" title="1">{
+        m := e.Code()
+        if len(s) != 0 </span><span class="cov0" title="0">{
+                m = s[0]
         }</span>
-        <span class="cov0" title="0">ne := e.new(m)
+        <span class="cov8" title="1">ne := e.new(m)
         ne.next = err
         return ne</span>
 }
 
-func (e appError) Wrapf(err error, format string, args ...interface{}) AppError <span class="cov0" title="0">{
+func (e *appError) Wrapf(err error, format string, args ...interface{}) AppError <span class="cov0" title="0">{
         ne := e.new(fmt.Sprintf(format, args...))
         ne.next = err
         return ne
 }</span>
 
-// Messagef: ユーザー向けメッセージのフォーマットにパラメータを適用する
-func (e appError) Messagef(args ...interface{}) AppError <span class="cov0" title="0">{
+func (e *appError) Messagef(args ...interface{}) AppError <span class="cov0" title="0">{
         e.infoMessage = fmt.Sprintf(e.infoMessage, args...)
-        return &amp;e
+        return e
 }</span>
 
 func (e *appError) Code() string <span class="cov8" title="1">{
         if e.code != `` </span><span class="cov8" title="1">{
                 return e.code
         }</span>
-        <span class="cov8" title="1">next := AsAppError(e.next)
-        if next != nil </span><span class="cov8" title="1">{
+        <span class="cov0" title="0">if next := AsAppError(e.next); next != nil </span><span class="cov0" title="0">{
                 return next.Code()
         }</span>
         <span class="cov0" title="0">return `not_defined`</span>
@@ -326,8 +268,7 @@ func (e *appError) Status() int <span class="cov0" title="0">{
         if e.status != 0 </span><span class="cov0" title="0">{
                 return e.status
         }</span>
-        <span class="cov0" title="0">next := AsAppError(e.next)
-        if next != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if next := AsAppError(e.next); next != nil </span><span class="cov0" title="0">{
                 return next.Status()
         }</span>
         <span class="cov0" title="0">return http.StatusInternalServerError</span>
@@ -335,65 +276,139 @@ func (e *appError) Status() int <span class="cov0" title="0">{
 
 func (e *appError) InfoMessage() string <span class="cov0" title="0">{
         if e.infoMessage != `` </span><span class="cov0" title="0">{
-                return e.infoMessage
+                return e.InfoMessage()
         }</span>
-        <span class="cov0" title="0">next := AsAppError(e.next)
-        if next != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if next := AsAppError(e.next); next != nil </span><span class="cov0" title="0">{
                 return next.InfoMessage()
         }</span>
-        <span class="cov0" title="0">return "unknown info message"</span>
+        <span class="cov0" title="0">return defaultErrorMessage</span>
 }
+
+func (e *appError) IsServerError() bool <span class="cov0" title="0">{
+        return e.Status() &gt;= http.StatusInternalServerError
+}</span>
+
+func (e *appError) new(s string) *appError <span class="cov8" title="1">{
+        e.message = s
+        e.frame = xerrors.Caller(2)
+        return e
+}</span>
+
+func newError(code, s string) *appError <span class="cov8" title="1">{
+        return &amp;appError{
+                code:        code,
+                infoMessage: s,
+        }
+}</span>
+
+func newBadRequest(code, s string) AppError <span class="cov8" title="1">{
+        e := newError(code, s)
+        e.status = http.StatusBadRequest
+        _ = e.Info()
+        return e
+}</span>
+
+//nolint
+func newUnauthorized(code, s string) AppError <span class="cov0" title="0">{
+        e := newError(code, s)
+        e.status = http.StatusUnauthorized
+        _ = e.Info()
+        return e
+}</span>
+
+//nolint
+func newForbidden(code, s string) AppError <span class="cov0" title="0">{
+        e := newError(code, s)
+        e.status = http.StatusForbidden
+        _ = e.Info()
+        return e
+}</span>
+
+//nolint
+func newConflict(code, s string) AppError <span class="cov0" title="0">{
+        e := newError(code, s)
+        e.status = http.StatusConflict
+        _ = e.Info()
+        return e
+}</span>
+
+func newNotFound(code, s string) AppError <span class="cov8" title="1">{
+        e := newError(code, s)
+        e.status = http.StatusNotFound
+        _ = e.Info()
+        return e
+}</span>
+
+func newInternalServerError(code, s string) AppError <span class="cov8" title="1">{
+        e := newError(code, s)
+        e.status = http.StatusInternalServerError
+        _ = e.Critical()
+        return e
+}</span>
 </pre>
 		
 		<pre class="file" id="file2" style="display: none">package errors
 
 type level string
 
-/* for logging */
 const (
-        levelPanic  level = "panic"
-        levelEmerg  level = "emerg"
-        levelAlert  level = "alert"
-        levelCrit   level = "crit"
-        levelError  level = "error"
-        levelWarn   level = "warn"
-        levelNotice level = "notice"
-        levelInfo   level = "info"
-        levelDebug  level = "debug"
+        levelPanic     level = "panic"
+        levelEmergency level = "emergency"
+        levelAlert     level = "alert"
+        levelCritical  level = "critical"
+        levelError     level = "error"
+        levelWarn      level = "warn"
+        levelNotice    level = "notice"
+        levelInfo      level = "info"
+        levelDebug     level = "debug"
 )
 
-func (e *appError) Panic() AppError <span class="cov0" title="0">{
+func (e *appError) Panic() AppError <span class="cov8" title="1">{
         e.level = levelPanic
         return e
 }</span>
-func (e *appError) Crit() AppError <span class="cov8" title="1">{
-        e.level = levelCrit
+
+func (e *appError) Critical() AppError <span class="cov8" title="1">{
+        e.level = levelCritical
         return e
 }</span>
-func (e *appError) Warn() AppError <span class="cov0" title="0">{
+
+func (e *appError) Warn() AppError <span class="cov8" title="1">{
         e.level = levelWarn
         return e
 }</span>
+
 func (e *appError) Info() AppError <span class="cov8" title="1">{
         e.level = levelInfo
         return e
 }</span>
 
-func (e *appError) IsPanic() bool <span class="cov0" title="0">{ return e.checkLevel(levelPanic) }</span>
-func (e *appError) IsCrit() bool  <span class="cov8" title="1">{ return e.checkLevel(levelCrit) }</span>
-func (e *appError) IsWarn() bool  <span class="cov0" title="0">{ return e.checkLevel(levelWarn) }</span>
-func (e *appError) IsInfo() bool  <span class="cov0" title="0">{ return e.checkLevel(levelInfo) }</span>
+func (e *appError) IsPanic() bool <span class="cov8" title="1">{
+        return e.checkLevel(levelPanic)
+}</span>
 
-func (e *appError) checkLevel(lv level) bool <span class="cov8" title="1">{
+func (e *appError) IsCritical() bool <span class="cov8" title="1">{
+        return e.checkLevel(levelCritical)
+}</span>
+
+func (e *appError) IsWarn() bool <span class="cov8" title="1">{
+        return e.checkLevel(levelWarn)
+}</span>
+
+func (e *appError) IsInfo() bool <span class="cov8" title="1">{
+        return e.checkLevel(levelInfo)
+}</span>
+
+func (e *appError) checkLevel(l level) bool <span class="cov8" title="1">{
         if e.level != `` </span><span class="cov8" title="1">{
-                return e.level == lv
+                return e.level == l
         }</span>
-        <span class="cov8" title="1">next := AsAppError(e.next)
-        if next != nil </span><span class="cov8" title="1">{
-                return next.checkLevel(lv)
+        <span class="cov0" title="0">next := AsAppError(e.next)
+        if next != nil </span><span class="cov0" title="0">{
+                next.checkLevel(l)
         }</span>
-        // Default level is critical
-        <span class="cov0" title="0">return lv == levelCrit</span>
+        // default critical
+        <span class="cov0" title="0">return l == levelCritical</span>
 }
 </pre>
 		
@@ -405,18 +420,153 @@ func (e *appError) BadRequest() AppError <span class="cov0" title="0">{
         e.status = http.StatusBadRequest
         return e
 }</span>
+
 func (e *appError) Unauthorized() AppError <span class="cov0" title="0">{
         e.status = http.StatusUnauthorized
         return e
 }</span>
+
 func (e *appError) NotFound() AppError <span class="cov0" title="0">{
         e.status = http.StatusNotFound
         return e
 }</span>
+
 func (e *appError) InternalServerError() AppError <span class="cov0" title="0">{
         e.status = http.StatusInternalServerError
         return e
 }</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package middleware
+
+import (
+        "context"
+        "errors"
+        "log"
+        "net/http"
+        "os"
+        "strings"
+
+        "google.golang.org/api/option"
+
+        firebase "firebase.google.com/go"
+
+        "github.com/satorunooshie/fireworks_stall/pkg/dcontext"
+)
+
+//nolint
+func Auth(next http.HandlerFunc) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                authHeader := r.Header.Get("Authorization")
+                idToken := strings.Replace(authHeader, "Bearer ", "", 1)
+                if idToken == "" </span><span class="cov8" title="1">{
+                        log.Printf("[INFO] auth::Auth: %v\n", errors.New("header is not set"))
+                        w.WriteHeader(http.StatusBadRequest)
+                        // TODO: Delete debug code instead return json error message
+                        _, _ = w.Write([]byte("empty token\n"))
+                        return
+                }</span>
+
+                <span class="cov8" title="1">path, err := getFilePath()
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Printf("[ERROR] auth::Auth::getFilePath: %v\n", err)
+                        w.WriteHeader(http.StatusInternalServerError)
+                        return
+                }</span>
+                <span class="cov8" title="1">opt := option.WithCredentialsFile(path)
+
+                ctx := r.Context()
+                if ctx == nil </span><span class="cov0" title="0">{
+                        ctx = context.Background()
+                }</span>
+
+                <span class="cov8" title="1">app, err := firebase.NewApp(ctx, nil, opt)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Printf("[ERROR] auth::Auth::firebase.NewApp: %v\n", err)
+                        w.WriteHeader(http.StatusInternalServerError)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">auth, err := app.Auth(ctx)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Printf("[ERROR] auth::Auth::app.Auth: %v\n", err)
+                        w.WriteHeader(http.StatusInternalServerError)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">token, err := auth.VerifyIDToken(ctx, idToken)
+                if err != nil </span><span class="cov8" title="1">{
+                        w.WriteHeader(http.StatusUnauthorized)
+                        // TODO: Delete debug code instead return json error message
+                        _, _ = w.Write([]byte("error verifying ID token\n"))
+                        return
+                }</span>
+                <span class="cov0" title="0">dcontext.SetUID(ctx, token.UID)
+                log.Printf("[INFO] Verified ID token: %v\n", token)
+                next.ServeHTTP(w, r.WithContext(ctx))</span>
+        }
+}
+
+// NOTE: 実行パスが違うのでトリミング
+func getFilePath() (string, error) <span class="cov8" title="1">{
+        const (
+                dirname  = "fireworks_stall"
+                filename = "firebase-sdk.json"
+        )
+        cp, err := os.Getwd()
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">idx := strings.LastIndex(cp, dirname)
+        return cp[:(idx+len(dirname))] + "/" + filename, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package middleware
+
+import (
+        "log"
+        "net/http"
+)
+
+func Get(next http.HandlerFunc) http.HandlerFunc <span class="cov0" title="0">{
+        return httpMethod(next, http.MethodGet)
+}</span>
+
+//nolint
+func Post(next http.HandlerFunc) http.HandlerFunc <span class="cov0" title="0">{
+        return httpMethod(next, http.MethodPost)
+}</span>
+
+//nolint
+func Put(next http.HandlerFunc) http.HandlerFunc <span class="cov0" title="0">{
+        return httpMethod(next, http.MethodPut)
+}</span>
+
+//nolint
+func Delete(next http.HandlerFunc) http.HandlerFunc <span class="cov0" title="0">{
+        return httpMethod(next, http.MethodDelete)
+}</span>
+
+func httpMethod(next http.HandlerFunc, method string) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                w.Header().Add("Access-Control-Allow-Origin", "*")
+                w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Accept, Origin, Authorization")
+                w.Header().Set("Access-Control-Allow-Credentials", "true")
+                if r.Method == http.MethodOptions </span><span class="cov0" title="0">{
+                        return
+                }</span>
+                <span class="cov0" title="0">if r.Method != method </span><span class="cov0" title="0">{
+                        w.WriteHeader(http.StatusMethodNotAllowed)
+                        if _, err := w.Write([]byte("Method not allowed")); err != nil </span><span class="cov0" title="0">{
+                                log.Println(err)
+                        }</span>
+                        <span class="cov0" title="0">return</span>
+                }
+                <span class="cov0" title="0">w.Header().Add("Content-Type", "application/json; charset=utf-8")
+                next(w, r)</span>
+        }
+}
 </pre>
 		
 		</div>
