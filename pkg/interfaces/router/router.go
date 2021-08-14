@@ -34,6 +34,6 @@ func Route(h *http.ServeMux, db *sql.DB) {
 	uu := usecase.NewUserUsecase(ur)
 	u := handler.NewUserHandler(uu)
 
-	h.HandleFunc("/level", middleware.Get(u.HandleGetLevel()))
-	h.HandleFunc("/score", middleware.Post(u.HandleSaveScore()))
+	h.HandleFunc("/level", auth.Auth(middleware.Get(u.HandleGetLevel())))
+	h.HandleFunc("/score", auth.Auth(middleware.Post(u.HandleSaveScore())))
 }
