@@ -7,17 +7,18 @@ import (
 type key string
 
 const (
-	uid key = "uid"
+	uidKey key = "uid"
 )
 
-func SetUID(ctx context.Context, userID string) context.Context {
-	return context.WithValue(ctx, uid, userID)
+func SetUID(ctx context.Context, uid string) context.Context {
+	return context.WithValue(ctx, uidKey, uid)
 }
 
 //nolint
-func GetUIDFromContext(ctx context.Context) (uid string) {
-	if ctx.Value(uid) != nil {
-		uid = ctx.Value(uid).(string)
+func GetUIDFromContext(ctx context.Context) string {
+	var uid string
+	if ctx.Value(uidKey) != nil {
+		uid = ctx.Value(uidKey).(string)
 	}
 	return uid
 }
