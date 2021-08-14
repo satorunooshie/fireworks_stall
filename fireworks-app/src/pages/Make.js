@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, matchPath } from "react-router-dom";
+import "./Make.css";
 
 function App() {
   const [color, setColor] = useState("#FFFF00");
@@ -10,8 +11,18 @@ function App() {
     top: 20,
     bottom: 20,
   };
+
+  const palet = [
+    "#d60031",
+    "#40f7f7",
+    "#00dd97",
+    "#f2ff00",
+    "#ffaa00",
+    "#ff00dc",
+    "#cb00ff",
+  ];
   const contentWidth = 200;
-  const contentHeight = 200;
+  const contentHeight = 260;
   const svgWidth = margin.left + margin.right + contentWidth;
   const svgHeight = margin.top + margin.bottom + contentHeight;
 
@@ -49,44 +60,68 @@ function App() {
   const handleChange = (e) => setColor(e.target.value);
 
   return (
-    <div>
-      <svg viewBox={`${-margin.left} ${-margin.top} ${svgWidth} ${svgHeight}`}>
-        <circle cx={100} cy={100} r={105} fill="#f5deb3" />
-        <circle cx={100} cy={100} r={100} fill="gray" />
-        <circle cx={100} cy={100} r={40} fill="lightgray" />
-        {smallGunpowder?.map((s) => {
-          return (
-            <g transform={`translate(100, 100)`}>
-              <circle
-                cx={50 * Math.cos(22.5 * s.id * c)}
-                cy={50 * Math.sin(22.5 * s.id * c)}
-                r={9.5}
-                fill={s.color}
-                onClick={() => colorChange(smallGunpowder, "small", color)}
-              />
-            </g>
-          );
-        })}
-        {bigGunpowder.map((s) => {
-          return (
-            <g transform={`translate(100, 100)`}>
-              <circle
-                cx={86 * Math.cos(18 * s.id * c)}
-                cy={86 * Math.sin(18 * s.id * c)}
-                r={13}
-                fill={s.color}
-                onClick={() => colorChange(bigGunpowder, "big", color)}
-              />
-            </g>
-          );
-        })}
-      </svg>
+    <div className="table">
+      <div className="gunpowder-center">
+        <svg
+          viewBox={`${-margin.left} ${-margin.top} ${svgWidth} ${svgHeight}`}
+        >
+          <circle cx={100} cy={100} r={105} fill="#f5deb3" />
+          <circle cx={100} cy={100} r={100} fill="gray" />
+          <circle cx={100} cy={100} r={40} fill="lightgray" />
+          {smallGunpowder?.map((s) => {
+            return (
+              <g transform={`translate(100, 100)`}>
+                <circle
+                  cx={50 * Math.cos(22.5 * s.id * c)}
+                  cy={50 * Math.sin(22.5 * s.id * c)}
+                  r={9.5}
+                  fill={s.color}
+                  onClick={() => colorChange(smallGunpowder, "small", color)}
+                />
+              </g>
+            );
+          })}
+          {bigGunpowder.map((s) => {
+            return (
+              <g transform={`translate(100, 100)`}>
+                <circle
+                  cx={86 * Math.cos(18 * s.id * c)}
+                  cy={86 * Math.sin(18 * s.id * c)}
+                  r={13}
+                  fill={s.color}
+                  onClick={() => colorChange(bigGunpowder, "big", color)}
+                />
+              </g>
+            );
+          })}
+          <g transform={`translate(${-10},${210})`}>
+            <rect x={0} y={0} width={127.5} height={68} />
+            {palet.map((color, idx) => {
+              console.log(Math.floor(idx % 4));
+              return (
+                <rect
+                  x={5 + (idx % 4) * (25 + 5)}
+                  y={5 + (25 + 5) * (idx - 3 < 0)}
+                  width={27.5}
+                  height={27.5}
+                  fill={color}
+                  stroke="black"
+                  strokeWidth="3px"
+                  onClick={() => {
+                    setColor(color);
+                  }}
+                />
+              );
+            })}
+          </g>
+        </svg>
+      </div>
       <div>
         <div>
           <button>一周一括</button>
           <button disabled>1つずつ</button>
         </div>
-        <div>
+        {/*<div>
           <label>
             <input
               type="radio"
@@ -125,7 +160,7 @@ function App() {
             />
             緑
           </label>{" "}
-        </div>
+        </div>*/}
       </div>
       <div>
         <button>
