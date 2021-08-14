@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function App() {
-  const [color, setColor] = useState("yellow");
+  const [color, setColor] = useState("#FFFF00");
 
   const margin = {
     left: 20,
@@ -61,7 +61,6 @@ function App() {
                 cx={50 * Math.cos(22.5 * s.id * c)}
                 cy={50 * Math.sin(22.5 * s.id * c)}
                 r={9.5}
-                fill="black"
                 fill={s.color}
                 onClick={() => colorChange(smallGunpowder, "small", color)}
               />
@@ -91,18 +90,18 @@ function App() {
           <label>
             <input
               type="radio"
-              value="yellow"
+              value="#FFFF00"
               onChange={handleChange}
-              checked={color === "yellow"}
+              checked={color === "#FFFF00"}
             />
             黄色
           </label>
           <label>
             <input
               type="radio"
-              value="pink"
+              value="#FFC0CB"
               onChange={handleChange}
-              checked={color === "pink"}
+              checked={color === "#FFC0CB"}
             />
             ピンク
           </label>{" "}
@@ -130,7 +129,7 @@ function App() {
       </div>
       <div>
         <button>
-          <Link to={`/setup`}>打ち上げる</Link>
+          <Link to={`/setup/${color.slice(1, 7)}`}>打ち上げる</Link>
         </button>
       </div>
     </div>

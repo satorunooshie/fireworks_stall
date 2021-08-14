@@ -3,9 +3,10 @@ const X_AXIS = 2;
 let canvas;
 let fireworks = [];
 let star = [];
+let originColor = "red";
+let p = 0;
 
 const testSketch = (p5) => {
-  console.log(document.documentElement);
   p5.setup = () => {
     canvas = p5.createCanvas(
       document.documentElement.clientWidth,
@@ -17,6 +18,17 @@ const testSketch = (p5) => {
     p5.frameRate(60);
     preStar();
   };
+
+  p5.myCustomRedrawAccordingToNewPropsHandler = function (props) {
+    if (props.color) {
+      originColor = props.color;
+    }
+    if (props.p) {
+      p = props.p;
+    }
+    console.log(originColor);
+  };
+  console.log(originColor);
 
   p5.draw = () => {
     // 背景色を設定
@@ -60,9 +72,9 @@ const testSketch = (p5) => {
           0,
           10,
           0.98,
-          "#FFFF00",
+          originColor,
           "origin",
-          0.9
+          p
         )
       );
     }

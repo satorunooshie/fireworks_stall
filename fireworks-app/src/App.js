@@ -24,7 +24,7 @@ function App() {
             <Route path="/make" exact>
               <Make />
             </Route>
-            <Route path="/setup" exact>
+            <Route path="/setup/:color" exact>
               <Setup />
             </Route>
             <Route path="/score" exact>
