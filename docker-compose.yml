@@ -1,0 +1,68 @@
+version: "3"
+
+volumes:
+  mysql-data:
+
+networks:
+  fireworks_stall:
+    driver: bridge
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    tty: true
+    volumes:
+      - ./:/go/src/github.com/satorunooshie/fireworks_stall
+    ports:
+      - "8888:8888"
+    depends_on:
+      - mysql
+    networks:
+      - fireworks_stall
+
+  mysql:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: Password!
+      MYSQL_DATABASE: fireworks
+      TZ: Asia/Tokyo
+    networks:
+      - fireworks_stall
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    environment:
+      SWAGGER_JSON: /api/api-document.yml
+    volumes:
+      - ./api-document.yml:/api/api-document.yml:ro
+    ports:
+      - 3300:8080
+
+  swagger-api:
+    image: stoplight/prism:3
+    ports:
+      - "10080:4010"
+    command: mock -h 0.0.0.0 /api/api-document.yml
+    volumes:
+      - ./api-document.yml:/api/api-document.yml
+
+  proxy:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/proxy/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
