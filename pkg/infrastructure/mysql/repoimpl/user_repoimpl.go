@@ -51,11 +51,11 @@ func (userI *userRepoImpl) Insert(ctx context.Context, entity *userM.User) error
 
 // Update
 func (userI *userRepoImpl) Update(ctx context.Context, entity *userM.User) error {
-	stmt, err := userI.db.Prepare("UPDATE user SET WHERE ")
+	stmt, err := userI.db.Prepare("UPDATE `user` SET `score` = ?, `level` = ? WHERE `uid` = ?")
 	if err != nil {
 		return err
 	}
-	if _, err := stmt.Exec(); err != nil {
+	if _, err := stmt.Exec(entity.Score, entity.Level, entity.UID); err != nil {
 		return err
 	}
 	return nil
