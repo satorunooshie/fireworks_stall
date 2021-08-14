@@ -4,10 +4,9 @@ let canvas;
 let fireworks = [];
 let star = [];
 
+const bottomPadding = 100;
 const testSketch = (p5) => {
-  let rotation = 0;
   p5.setup = () => {
-    /*p5.createCanvas(600, 400, p5.WEBGL)*/
     canvas = p5.createCanvas(
       document.documentElement.clientWidth,
       document.documentElement.clientHeight
@@ -20,19 +19,11 @@ const testSketch = (p5) => {
     preStar();
   };
 
-  p5.myCustomRedrawAccordingToNewPropsHandler = (props) => {
+  /*p5.myCustomRedrawAccordingToNewPropsHandler = (props) => {
     if (props.rotation) rotation = (props.rotation * Math.PI) / 180;
-  };
+  };*/
 
   p5.draw = () => {
-    /* p5.background(100);
-    p5.normalMaterial();
-    p5.noStroke();
-    p5.push();
-    p5.rotateY(rotation);
-    p5.box(100);
-    p5.pop();
-    rotation += 0.01;*/
     // 背景色を設定
     setGradient(
       0,
