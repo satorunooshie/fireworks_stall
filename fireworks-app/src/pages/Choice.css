@@ -1,0 +1,20 @@
+.kayaku-group {
+  display: flex;
+  justify-content: center;
+}
+
+.kayaku-group img {
+  padding: 8px;
+  margin: 5px;
+}
+
+.hanabi-group {
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.hanabi-group img {
+  margin: 2.5px;
+}

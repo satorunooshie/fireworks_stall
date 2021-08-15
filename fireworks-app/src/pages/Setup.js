@@ -8,8 +8,8 @@ import { Link, useParams } from "react-router-dom";
 function Setup() {
   const [fin, setFin] = useState(false);
   const [colorArray, setColorArray] = useState(null);
-  const { color } = useParams();
-  const p = 1; //Math.random(0,1);
+  const { color, p } = useParams();
+  //const p = 1; //Math.random(0,1);
 
   setTimeout(function () {
     console.log("time out");

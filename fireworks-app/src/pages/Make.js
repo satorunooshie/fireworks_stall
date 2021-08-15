@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link, matchPath } from "react-router-dom";
+import { Link, matchPath, useParams } from "react-router-dom";
 import "./Make.css";
 
 function App() {
-  const [color, setColor] = useState("#fffacd");
+  const [color, setColor] = useState("black");
   const [level, setLevel] = useState(0);
   const [indiv, setIndiv] = useState(false);
+  const { min, max } = useParams;
+  const [p, setP] = useState(-1);
 
   useEffect(() => {
+    setP(Math.random(min, max));
     const f = async () => {
       const response = await fetch("http://localhost:8888/level", {
         headers: {
@@ -21,6 +24,7 @@ function App() {
     f();
   }, []);
   console.log(level);
+  console.log(p);
 
   const margin = {
     left: 20,
@@ -218,7 +222,7 @@ function App() {
       </div>
       <div>
         <button>
-          <Link to={`/setup/${getColorArray()}`}>打ち上げる</Link>
+          <Link to={`/setup/${getColorArray()}/${p}`}>打ち上げる</Link>
         </button>
       </div>
     </div>

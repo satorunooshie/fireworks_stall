@@ -9,6 +9,8 @@ import Make from "./pages/Make";
 import Setup from "./pages/Setup";
 import Score from "./pages/Score";
 import Logout from "./pages/Logout";
+import Choice from "./pages/Choice";
+
 function App() {
   return (
     <Router>
@@ -24,10 +26,13 @@ function App() {
             <Route exact path="/">
               <Redirect to="/login" />
             </Route>
-            <Route path="/make" exact>
+            <Route path="/choice" exact>
+              <Choice />
+            </Route>
+            <Route path="/make/:min/:max" exact>
               <Make />
             </Route>
-            <Route path="/setup/:color" exact>
+            <Route path="/setup/:color/:p" exact>
               <Setup />
             </Route>
             <Route path="/score" exact>
