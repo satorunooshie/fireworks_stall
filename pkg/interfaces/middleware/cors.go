@@ -29,9 +29,9 @@ func httpMethod(next http.HandlerFunc, method string) http.HandlerFunc {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Accept, Origin, Authorization, username")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		// if r.Method == http.MethodOptions {
-		// 	return
-		// }
+		if r.Method == http.MethodOptions {
+			return
+		}
 		if r.Method != method {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			if _, err := w.Write([]byte("Method not allowed")); err != nil {
