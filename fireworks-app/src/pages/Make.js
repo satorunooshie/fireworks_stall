@@ -176,8 +176,10 @@ function App() {
                 y={0}
                 width={50}
                 height={32.5}
-                stroke="white"
-                fill={!indiv ? "brown" : "gray"}
+                rx={5}
+                stroke="skyblue"
+                strokeWidth="2"
+                fill={!indiv ? "skyblue" : "white"}
               />
               <text
                 x={50 / 2}
@@ -199,8 +201,10 @@ function App() {
                 y={37.5}
                 width={50}
                 height={30}
-                stroke="white"
-                fill={indiv ? "brown" : "gray"}
+                rx={5}
+                strokeWidth="2"
+                stroke="skyblue"
+                fill={indiv ? "skyblue" : "white"}
               />
               <text
                 x={50 / 2}
@@ -221,7 +225,12 @@ function App() {
 
       <div>
         <button className="utiage-button">
-          <Link to={`/setup/${getColorArray()}/${p}`}>打ち上げる</Link>
+          <Link
+            to={`/setup/${getColorArray()}/${p}`}
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            打ち上げ
+          </Link>
         </button>
       </div>
     </div>
