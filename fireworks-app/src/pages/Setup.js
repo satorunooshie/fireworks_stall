@@ -44,11 +44,9 @@ function Setup() {
     f();
   }, [color]);
 
-  const twitteTxt = `http://twitter.com/share?url=https://strange-voice-checker.netlify.app&text=【あなたが打ち上げた花火は${
+  const twitteTxt = `http://twitter.com/share?url=https://firework-stall.netlify.app&text=あなたが打ち上げた花火は${Math.round(
     300 * p
-  }m%まで飛びました！
-   %0▼みんなも花火を作って打ち上げよう &hashtags=わくわく花火屋さん&count=horizontal&lang=ja`;
-
+  )}m飛びました！みんなも花火を作って打ち上げよう！&hashtags=わくわく花火屋さん&count=horizontal&lang=ja`;
   return (
     <div className="container">
       <div>
@@ -92,6 +90,15 @@ function Setup() {
                     </Link>
                   </button>
                   <button className="twitter-button">twitterで共有</button>
+                  <button color="secondary" href={twitteTxt}>
+                    <a
+                      href={twitteTxt}
+                      style={{ color: "white", textDecoration: "none" }}
+                    >
+                      もう一回やる
+                    </a>
+                    &ensp;シェア
+                  </button>
                 </div>
               </div>
             </div>
