@@ -36,5 +36,5 @@ func Route(h *http.ServeMux, db *sql.DB) {
 
 	h.HandleFunc("/level", middleware.Get(auth.Auth(u.HandleGetLevel())))
 	h.HandleFunc("/score", middleware.Put(auth.Auth(u.HandleSaveScore())))
-  h.HandleFunc("/ranking", middleware.Get(auth.Auth(u.HandleGetRanking())))
+	h.HandleFunc("/ranking", middleware.Get(auth.Auth(u.HandleGetRanking())))
 }
