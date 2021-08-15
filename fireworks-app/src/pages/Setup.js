@@ -11,12 +11,13 @@ function Setup() {
   const [colorArray, setColorArray] = useState(null);
   const { color, p } = useParams();
   //const p = 1; //Math.random(0,1);
+  const [score, setScore] = useState([]);
 
   setTimeout(function () {
     console.log("time out");
     setFin(true);
     //多分10秒くらいがちょうどいい
-  }, 8000);
+  }, 3000);
 
   useEffect(() => {
     const f = async () => {
@@ -30,7 +31,7 @@ function Setup() {
       }
       setColorArray(ca);
 
-      const response = await fetch("http://localhost:8888/score", {
+      const response_score = await fetch("http://localhost:8888/score", {
         //TODO:PUTに変更
         method: "POST",
         headers: {
@@ -39,12 +40,14 @@ function Setup() {
         },
         body: JSON.stringify({ score: Math.round(300 * p) }),
       });
-
-      //const data = await response.json();
-      //setLevel(data.level);
     };
     f();
   }, [color]);
+
+  const twitteTxt = `http://twitter.com/share?url=https://strange-voice-checker.netlify.app&text=【あなたが打ち上げた花火は${
+    300 * p
+  }m%まで飛びました！
+   %0▼みんなも花火を作って打ち上げよう &hashtags=わくわく花火屋さん&count=horizontal&lang=ja`;
 
   return (
     <div className="container">
