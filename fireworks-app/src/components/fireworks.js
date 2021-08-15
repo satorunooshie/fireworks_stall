@@ -33,10 +33,10 @@ const testSketch = (p5) => {
       colorArray = props.colors;
     }
   };
-  console.log(originColor);
+  /* console.log(originColor);
   console.log(colorArray);
   console.log(p);
-
+*/
   p5.draw = () => {
     // 背景色を設定
     setGradient(

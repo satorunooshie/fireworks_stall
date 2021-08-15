@@ -24,7 +24,7 @@ function Login() {
   }, []);
   const myHighScore = score !== [] ? score.my_score : 0;
   const token = localStorage.getItem("username");
-  console.log(token);
+  //console.log(token);
   const [logined, setLogined] = useState(false);
   const history = useHistory();
   function loginWithTwitter() {

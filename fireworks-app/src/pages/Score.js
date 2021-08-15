@@ -12,7 +12,7 @@ function Score() {
         },
       });
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setScore(data);
     })();
   }, []);
@@ -31,7 +31,7 @@ function Score() {
   scoreList?.map((item) => {
     item.score = Number(item.score);
   });
-  console.log(scoreList);
+  //console.log(scoreList);
   scoreList?.sort(function (a, b) {
     if (a.score < b.score) return 1;
     if (a.score > b.score) return -1;
