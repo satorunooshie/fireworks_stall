@@ -90,6 +90,7 @@ func (a *Auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 			ent := &model.User{
 				UID:   token.UID,
 				Name:  h,
+				Score: 0,
 				Level: 1,
 			}
 			if err := uc.Insert(ctx, ent); err != nil {
