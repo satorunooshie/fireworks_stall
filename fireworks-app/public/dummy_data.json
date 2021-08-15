@@ -1,0 +1,51 @@
+{
+  "my_score": "1300",
+  "my_rank": "1",
+  "my_name":"my_user_test",
+  "score_list":[
+    {
+      "score":"366666664",
+      "rank" : "1",
+      "name":"hoge-aauser"
+    },    {
+      "score":"233",
+      "rank" : "2",
+      "name":"hogeaffuser"
+    },    {
+      "score":"111",
+      "rank" : "3",
+      "name":"hogefdssauser"
+    },    {
+      "score":"14343",
+      "rank" : "4",
+      "name":"hoge-gsuser"
+    },    {
+      "score":"1434",
+      "rank" : "5",
+      "name":"hggsdoge-user"
+    },    {
+      "score":"1545",
+      "rank" : "6",
+      "name":"hoge-gdduser"
+    },    {
+      "score":"166556",
+      "rank" : "7",
+      "name":"hogegdss-user"
+    },
+    {
+      "score":"16577",
+      "rank" : "8",
+      "name":"hoge-user"
+    },
+    {
+      "score":"1788",
+      "rank" : "9",
+      "name":"hoge-user"
+    },
+    {
+      "score":"1757",
+      "rank" : "10",
+      "name":"hoge-user"
+    }
+  ]
+  }

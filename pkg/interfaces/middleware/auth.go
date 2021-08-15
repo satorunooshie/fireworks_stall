@@ -99,7 +99,7 @@ func (a *Auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
-		dcontext.SetUID(ctx, token.UID)
+		ctx = dcontext.SetUID(ctx, token.UID)
 		log.Printf("[INFO] Verified ID token: %v\n", token)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}

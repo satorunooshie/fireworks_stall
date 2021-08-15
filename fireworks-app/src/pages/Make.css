@@ -1,0 +1,9 @@
+.gunpowder-center {
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.table {
+  background-image: url("../images/table.jpeg");
+}
