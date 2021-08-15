@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./Make.css";
 import kayakuImg from "../images/kayaku.PNG";
 import hanabiImg from "../images/hanabi.PNG";
+import chochinImg from "../images/tyoutinn.png";
 import "./Choice.css";
 
 function Choice() {
@@ -11,9 +12,7 @@ function Choice() {
   const [sizeId, setSizeId] = useState(-1);
   const [kayakuID, setKayakuId] = useState(-1);
 
-  const [color, setColor] = useState("#fffacd");
   const [level, setLevel] = useState(0);
-  const [indiv, setIndiv] = useState(false);
 
   useEffect(() => {
     const f = async () => {
@@ -28,93 +27,21 @@ function Choice() {
     };
     f();
   }, []);
-  console.log(level);
-
-  const margin = {
-    left: 20,
-    right: 20,
-    top: 20,
-    bottom: 20,
-  };
-
-  const palet = [
-    "#d60031",
-    "#40f7f7",
-    "#00dd97",
-    "#f2ff00",
-    "#ffaa00",
-    "#ff00dc",
-    "#cb00ff",
-  ];
-  const contentWidth = 200;
-  const contentHeight = 260;
-  const svgWidth = margin.left + margin.right + contentWidth;
-  const svgHeight = margin.top + margin.bottom + contentHeight;
-
-  const [smallGunpowder, setSmallGunpowder] = useState([]);
-  const [bigGunpowder, setBigGunpowder] = useState([]);
-
-  useEffect(() => {
-    const newGunpowders = [];
-    for (let i = 0; i < 16; i++) {
-      newGunpowders.push({ id: i, color: "black" });
-    }
-    setSmallGunpowder(newGunpowders);
-
-    const newGunpowders2 = [];
-    for (let i = 0; i < 20; i++) {
-      newGunpowders2.push({ id: i, color: "black" });
-    }
-    setBigGunpowder(newGunpowders2);
-  }, []);
-
-  const c = Math.PI / 180;
-
-  function colorChange(gunpowders, size, color, id) {
-    const newGunpowders = JSON.parse(JSON.stringify(gunpowders));
-    if (!indiv) {
-      for (let i = 0; i < newGunpowders.length; i++) {
-        newGunpowders[i].color = color;
-      }
-    } else {
-      newGunpowders[id].color = color;
-    }
-    if (size === "small") {
-      setSmallGunpowder(newGunpowders);
-    } else {
-      setBigGunpowder(newGunpowders);
-    }
-  }
-
-  function getColorArray() {
-    let colors = new Set();
-    for (const c of smallGunpowder) {
-      if (c.color !== "black") {
-        colors.add(c.color);
-      } else {
-        colors.add("#fffacd");
-      }
-    }
-    for (const c of bigGunpowder) {
-      if (c.color !== "black") {
-        colors.add(c.color);
-      } else {
-        colors.add("#fffacd");
-      }
-    }
-
-    let colorCodeChar = "";
-    for (const c of colors) {
-      colorCodeChar += c.slice(1, 7);
-    }
-    return colorCodeChar;
-  }
-
-  //const handleChange = (e) => setColor(e.target.value);
 
   return (
     <div>
-      <div>サイズと火薬を選んでね</div>
+      <img
+        src={chochinImg}
+        style={{
+          width: "100%",
+        }}
+        alt=""
+      />
+      <div
+        style={{ textAlign: "center", margin: "1.25rem", fontSize: "1.75rem" }}
+      >
+        サイズと火薬を選んでね
+      </div>
       <div className="hanabi-group">
         <img
           src={hanabiImg}
@@ -197,11 +124,15 @@ function Choice() {
           alt=""
         />
       </div>
-      <div>
-        <button>
-          <Link to={`/make/${kayaku}/${size}`}>次へ</Link>
-        </button>
-      </div>
+      {size == null || kayaku == null ? (
+        <div></div>
+      ) : (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <button>
+            <Link to={`/make/${kayaku}/${size}`}>次へ</Link>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

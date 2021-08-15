@@ -72,7 +72,7 @@ function Setup() {
                     <Link to={`/score`}>ランキング</Link>
                   </button>
                   <button>
-                    <Link to={`/make`}>もう一回やる</Link>
+                    <Link to={`/choice`}>もう一回やる</Link>
                   </button>
                   <button>twitterで共有</button>
                 </div>
