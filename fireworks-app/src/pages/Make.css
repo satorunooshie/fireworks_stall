@@ -6,4 +6,20 @@
 
 .table {
   background-image: url("../images/table.jpeg");
+  position: relative;
+}
+
+.utiage-button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 2.5vh;
+  margin-right: 0.5rem;
+
+  width: 22.5vw;
+  display: block;
+  padding: 10px;
+  color: #fff;
+  background-color: #eb6100;
+  border-radius: 100vh;
 }

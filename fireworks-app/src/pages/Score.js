@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+
 function Score() {
   const [score, setScore] = useState([]);
   useEffect(() => {
