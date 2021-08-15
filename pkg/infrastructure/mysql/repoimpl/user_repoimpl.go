@@ -21,13 +21,13 @@ func NewUserRepoImpl(db *sql.DB) userR.UserRepository {
 
 // SelectUser
 func (userI *userRepoImpl) SelectUser(ctx context.Context, uid string) (*userM.User, error) {
-	row := userI.db.QueryRow("SELECT * FROM `user` WHERE `uid` = ?", uid)
+	row := userI.db.QueryRow("SELECT `uid`, `name`, `score`, `level` FROM `user` WHERE `uid` = ?", uid)
 	return convertToUser(row)
 }
 
 // SelectUsers
 func (userI *userRepoImpl) SelectUsers(ctx context.Context) ([]*userM.User, error) {
-	rows, err := userI.db.Query("SELECT * FROM `user` ORDER BY `score` DESC LIMIT 10")
+	rows, err := userI.db.Query("SELECT `uid`, `name`, `score`, `level` FROM `user` ORDER BY `score` DESC LIMIT 10")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -88,7 +88,7 @@ func (userI *userRepoImpl) Delete(ctx context.Context, entity *userM.User) error
 // convertToUser
 func convertToUser(row *sql.Row) (*userM.User, error) {
 	user := userM.User{}
-	if err := row.Scan(&user.UID, &user.Name, &user.Score, &user.Level, &user.CreatedAt, &user.UpdatedAt); err != nil {
+	if err := row.Scan(&user.UID, &user.Name, &user.Score, &user.Level); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -103,7 +103,7 @@ func convertToUsers(rows *sql.Rows) ([]*userM.User, error) {
 	var users []*userM.User
 	for rows.Next() {
 		var user userM.User
-		if err := rows.Scan(&user.UID, &user.Name, &user.Score, &user.Level, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err := rows.Scan(&user.UID, &user.Name, &user.Score, &user.Level); err != nil {
 			return nil, err
 		}
 		users = append(users, &user)
