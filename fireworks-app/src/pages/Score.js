@@ -5,7 +5,12 @@ function Score() {
   const [score, setScore] = useState([]);
   useEffect(() => {
     (async () => {
-      const response = await fetch("./dummy_data.json");
+      const response = await fetch("http://localhost:8888/ranking", {
+        headers: {
+          Authorization: localStorage.getItem("Authorization"),
+          username: localStorage.getItem("username"),
+        },
+      });
       const data = await response.json();
       console.log(data);
       setScore(data);
@@ -14,7 +19,9 @@ function Score() {
   if (score.length === 0) {
     return <div>loading</div>;
   }
-  const scoreList = score.score_list.slice();
+
+  const scoreList = score.rankings.slice();
+  console.log(scoreList);
 
   const myName = score.my_name;
 
@@ -23,11 +30,11 @@ function Score() {
     rank: score.my_rank,
     name: score.my_name,
   });
-  scoreList.map((item) => {
+  scoreList?.map((item) => {
     item.score = Number(item.score);
   });
   console.log(scoreList);
-  scoreList.sort(function (a, b) {
+  scoreList?.sort(function (a, b) {
     if (a.score < b.score) return 1;
     if (a.score > b.score) return -1;
     return 0;
@@ -43,7 +50,7 @@ function Score() {
           <p>{score.my_rank}</p>
           <p>{score.my_score}</p>
         </div>
-        {score.score_list.map((item, i) => {
+        {score.rankings.map((item, i) => {
           if (i < 10) {
             return (
               <div
