@@ -128,23 +128,23 @@ function Choice() {
         <div></div>
       ) : (
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <button
-            style={{
-              width: "100px",
-              display: "block",
-              padding: "10px",
-              color: "#fff",
-              backgroundColor: "#eb6100",
-              borderRadius: "100vh",
-            }}
+          <Link
+            to={`/make/${kayaku}/${size}`}
+            style={{ color: "white", textDecoration: "none" }}
           >
-            <Link
-              to={`/make/${kayaku}/${size}`}
-              style={{ color: "white", textDecoration: "none" }}
+            <button
+              style={{
+                width: "100px",
+                display: "block",
+                padding: "10px",
+                color: "#fff",
+                backgroundColor: "#eb6100",
+                borderRadius: "100vh",
+              }}
             >
               次へ
-            </Link>
-          </button>
+            </button>
+          </Link>
         </div>
       )}
     </div>

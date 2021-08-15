@@ -24,8 +24,6 @@ function App() {
     };
     f();
   }, []);
-  console.log(level);
-  console.log(p);
 
   const margin = {
     left: 20,
@@ -224,14 +222,12 @@ function App() {
       </div>
 
       <div>
-        <button className="utiage-button">
-          <Link
-            to={`/setup/${getColorArray()}/${p}`}
-            style={{ color: "white", textDecoration: "none" }}
-          >
-            打ち上げ
-          </Link>
-        </button>
+        <Link
+          to={`/setup/${getColorArray()}/${p}`}
+          style={{ color: "white", textDecoration: "none" }}
+        >
+          <button className="utiage-button">打ち上げ</button>
+        </Link>
       </div>
     </div>
   );

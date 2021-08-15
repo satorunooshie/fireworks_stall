@@ -14,7 +14,7 @@ function Setup() {
   const [score, setScore] = useState([]);
 
   setTimeout(function () {
-    console.log("time out");
+    // console.log("time out");
     setFin(true);
     //多分10秒くらいがちょうどいい
   }, 7500);

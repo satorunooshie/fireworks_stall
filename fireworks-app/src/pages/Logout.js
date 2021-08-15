@@ -12,7 +12,7 @@ function Logout() {
     })
     .catch(function (error) {
       // An error happened.
-      console.log("ログアウトしっっぱい");
+      //console.log("ログアウトしっっぱい");
     });
   return <div></div>;
 }
