@@ -17,7 +17,7 @@ function Setup() {
     console.log("time out");
     setFin(true);
     //多分10秒くらいがちょうどいい
-  }, 3000);
+  }, 7500);
 
   useEffect(() => {
     const f = async () => {
@@ -73,32 +73,18 @@ function Setup() {
                   <Score />
                 </div>
                 <div className="button-block">
-                  <button className="nomal-button">
-                    <Link
-                      to={`/score`}
-                      style={{ color: "white", textDecoration: "none" }}
-                    >
-                      ランキング
-                    </Link>
-                  </button>
-                  <button className="nomal-button">
-                    <Link
-                      to={`/choice`}
-                      style={{ color: "white", textDecoration: "none" }}
-                    >
-                      もう一回やる
-                    </Link>
-                  </button>
-                  <button className="twitter-button">twitterで共有</button>
-                  <button color="secondary" href={twitteTxt}>
-                    <a
-                      href={twitteTxt}
-                      style={{ color: "white", textDecoration: "none" }}
-                    >
-                      もう一回やる
-                    </a>
-                    &ensp;シェア
-                  </button>
+                  <Link
+                    to={`/choice`}
+                    style={{ color: "white", textDecoration: "none" }}
+                  >
+                    <button className="nomal-button">もう一回やる</button>
+                  </Link>
+                  <a
+                    href={twitteTxt}
+                    style={{ color: "white", textDecoration: "none" }}
+                  >
+                    <button className="twitter-button">twitterで共有</button>
+                  </a>
                 </div>
               </div>
             </div>
