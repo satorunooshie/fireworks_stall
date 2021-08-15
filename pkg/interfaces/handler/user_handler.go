@@ -138,7 +138,6 @@ func (userH *userHandler) HandleGetRanking() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		ctx := request.Context()
 		uid := dcontext.GetUIDFromContext(ctx)
-		uid = "aaa"
 		if uid == "" {
 			log.Print("[INFO] user not found")
 			http.Error(writer, "user not found", http.StatusBadRequest)

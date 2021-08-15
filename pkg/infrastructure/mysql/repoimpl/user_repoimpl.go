@@ -4,7 +4,6 @@ package repoimpl
 import (
 	"context"
 	"database/sql"
-	"log"
 
 	userM "github.com/satorunooshie/fireworks_stall/pkg/domain/model"
 	userR "github.com/satorunooshie/fireworks_stall/pkg/domain/repository"
@@ -35,7 +34,6 @@ func (userI *userRepoImpl) SelectUsers(ctx context.Context) ([]*userM.User, erro
 		}
 		return nil, err
 	}
-	log.Println(rows == nil, rows.NextResultSet(), rows.Scan() == nil)
 	return convertToUsers(rows)
 }
 
