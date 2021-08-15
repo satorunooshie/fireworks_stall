@@ -39,7 +39,7 @@ func (userI *userRepoImpl) SelectUsers(ctx context.Context) ([]*userM.User, erro
 
 // SelectUserScoreRank
 func (userI *userRepoImpl) SelectUserScoreRank(ctx context.Context, score int32) (int32, error) {
-	row := userI.db.QueryRow("SELECT COUNT(*) + 1 FROM `user` WHERE `score` < ?", score)
+	row := userI.db.QueryRow("SELECT COUNT(*) + 1 FROM `user` WHERE `score` > ?", score)
 	e := struct {
 		Count int32
 	}{}
