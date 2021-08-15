@@ -63,7 +63,7 @@ function Login() {
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        history.push("/make");
+        history.push("/choice");
       }
     });
   }
@@ -72,7 +72,7 @@ function Login() {
     <Router history={history}>
       <Switch>
         {/* <Route path="/" exact component={PageOne} /> */}
-        <Route path="/make/" exact>
+        <Route path="/choice/" exact>
           <Make />
         </Route>
         <Route path="score/" exact>

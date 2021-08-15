@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, matchPath, useParams } from "react-router-dom";
 import "./Make.css";
+import chochinImg from "../images/tyoutinn.png";
 
 function App() {
   const [color, setColor] = useState("black");
@@ -145,7 +146,7 @@ function App() {
               </g>
             );
           })}
-          <g transform={`translate(${-10},${210})`}>
+          <g transform={`translate(${-10},${210})scale(0.9)`}>
             <rect x={0} y={0} width={127.5} height={68} />
             {palet.map((color, idx) => {
               if (level <= 3 && idx < 3) {
@@ -167,61 +168,59 @@ function App() {
               );
             })}
           </g>
+          <g transform={`translate(${contentWidth - 90},${210})scale(0.9)`}>
+            <g onClick={() => setIndiv(false)}>
+              {" "}
+              <rect
+                x={0}
+                y={0}
+                width={50}
+                height={32.5}
+                stroke="white"
+                fill={!indiv ? "brown" : "gray"}
+              />
+              <text
+                x={50 / 2}
+                y={32.5 / 2}
+                textAnchor="middle"
+                dominantBaseline="central"
+                stroke="black"
+                strokeWidth="1"
+                font-family="Verdana"
+                font-size="20"
+              >
+                一周
+              </text>
+            </g>
+
+            <g onClick={() => setIndiv(true)}>
+              <rect
+                x={0}
+                y={37.5}
+                width={50}
+                height={30}
+                stroke="white"
+                fill={indiv ? "brown" : "gray"}
+              />
+              <text
+                x={50 / 2}
+                y={32.5 / 2 + 37.5}
+                textAnchor="middle"
+                dominantBaseline="central"
+                stroke="black"
+                strokeWidth="1"
+                font-family="Verdana"
+                font-size="20"
+              >
+                個別
+              </text>
+            </g>
+          </g>
         </svg>
       </div>
+
       <div>
-        <div>
-          <button onClick={() => setIndiv(false)}>一周一括</button>
-          <button
-            onClick={() => setIndiv(true)}
-            disabled={level >= 2 ? false : true}
-          >
-            1つずつ
-          </button>
-        </div>
-        {/*<div>
-          <label>
-            <input
-              type="radio"
-              value="#FFFF00"
-              onChange={handleChange}
-              checked={color === "#FFFF00"}
-            />
-            黄色
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="#FFC0CB"
-              onChange={handleChange}
-              checked={color === "#FFC0CB"}
-            />
-            ピンク
-          </label>{" "}
-          <label>
-            <input
-              type="radio"
-              value="blue"
-              onChange={handleChange}
-              checked={color === "blue"}
-              disabled
-            />
-            　青
-          </label>{" "}
-          <label>
-            <input
-              type="radio"
-              value="green"
-              onChange={handleChange}
-              checked={color === "green"}
-              disabled
-            />
-            緑
-          </label>{" "}
-        </div>*/}
-      </div>
-      <div>
-        <button>
+        <button className="utiage-button">
           <Link to={`/setup/${getColorArray()}/${p}`}>打ち上げる</Link>
         </button>
       </div>
