@@ -11,5 +11,4 @@ type User struct {
 	Level     int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt *time.Time
 }
