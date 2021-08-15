@@ -79,21 +79,30 @@ func (a *Auth) Auth(next http.HandlerFunc) http.HandlerFunc {
 		uri := repoimpl.NewUserRepoImpl(a.db)
 		uc := usecase.NewUserUsecase(uri)
 		user, err := uc.SelectUser(ctx, token.UID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			// TODO: Delete debug code instead return json error message
+			log.Printf("error select user: %v\n", err)
+		}
 		if user == nil {
 			h := r.Header.Get("username")
 			if h == "" {
 				w.WriteHeader(http.StatusBadRequest)
 				// TODO: Delete debug code instead return json error message
+				log.Print("error username is empty\n")
 				_, _ = w.Write([]byte("error username is empty\n"))
 				return
 			}
 			ent := &model.User{
-				UID:  token.UID,
-				Name: h,
+				UID:   token.UID,
+				Name:  h,
+				Score: 0,
+				Level: 1,
 			}
 			if err := uc.Insert(ctx, ent); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				// TODO: Delete debug code instead return json error message
+				log.Printf("error insert user: %v\n", err)
 				_, _ = w.Write([]byte("error insert user\n"))
 				return
 			}
